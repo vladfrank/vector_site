@@ -271,6 +271,8 @@ class Handler(BaseHTTPRequestHandler):
             ".css": "text/css; charset=utf-8",
             ".js": "text/javascript; charset=utf-8",
             ".svg": "image/svg+xml",
+            ".ico": "image/vnd.microsoft.icon",
+            ".png": "image/png",
         }.get(file.suffix, "application/octet-stream")
         body = file.read_bytes()
         self.send_response(200)
