@@ -12,6 +12,9 @@ from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 from pathlib import Path
 from urllib.parse import urlparse
 
+from contact import DEFAULT_HOURS, contact_status, validate_hours
+from site_content import CONTENT, install_content
+
 ROOT = Path(__file__).resolve().parent
 DB = Path(os.environ.get("VECTOR_DB", str(ROOT / "data" / "vector.db")))
 STATUSES = [
@@ -82,6 +85,25 @@ def initialize():
                         json.dumps(item, ensure_ascii=False),
                     ),
                 )
+        # Связываем только исходные демонстрационные кейсы.
+        demo_links = {
+            "restructuring": ["debt"],
+            "reporting": ["management"],
+            "investment": ["finance"],
+        }
+        for row in db.execute(
+            "SELECT id, data FROM content WHERE kind='case'"
+        ):
+            item = json.loads(row["data"])
+            if item.get("demo") and "service_ids" not in item:
+                item["service_ids"] = demo_links.get(item["id"], [])
+                db.execute(
+                    "UPDATE content SET data=? WHERE id=?",
+                    (
+                        json.dumps(item, ensure_ascii=False),
+                        item["id"],
+                    ),
+                )
         db.execute(
             "INSERT OR IGNORE INTO settings VALUES (1, ?)",
             (
@@ -126,6 +148,8 @@ def initialize():
                 ),
             ),
         )
+
+        install_content(db)
 
 
 def timestamp():
@@ -190,6 +214,14 @@ class Handler(BaseHTTPRequestHandler):
                 200,
                 {"authenticated": bool(s), "csrf": s["csrf"] if s else None},
             )
+        if path == "/api/contact":
+            with connection() as db:
+                settings = json.loads(
+                    db.execute(
+                        "SELECT data FROM settings WHERE id=1"
+                    ).fetchone()[0]
+                )
+            return self.send(200, contact_status(settings))
         if path == "/api/public":
             with connection() as db:
                 items = [
@@ -204,8 +236,15 @@ class Handler(BaseHTTPRequestHandler):
             return self.send(
                 200,
                 {
-                    "items": [x for x in items if x.get("published")],
+                    "items": [
+                        x
+                        for x in items
+                        if x.get("published") and x.get("kind") == "service"
+                    ],
                     "settings": settings,
+                    "contact": contact_status(settings),
+                    "cycle_stages": CONTENT["stages"],
+                    "visibility": {"news": False, "cases": False},
                 },
             )
         if path.startswith("/api/admin/"):
@@ -230,6 +269,13 @@ class Handler(BaseHTTPRequestHandler):
                             )
                         ],
                     )
+                if path == "/api/admin/founders":
+                    settings = json.loads(
+                        db.execute(
+                            "SELECT data FROM settings WHERE id=1"
+                        ).fetchone()[0]
+                    )
+                    return self.send(200, settings.get("founders", []))
                 if path == "/api/admin/settings":
                     return self.send(
                         200,
@@ -513,6 +559,20 @@ class Handler(BaseHTTPRequestHandler):
                         demo=data.get("demo") is True,
                     )
                     if kind == "case":
+                        service_ids = data.get("service_ids", [])
+                        if not isinstance(service_ids, list) or any(
+                            not isinstance(value, str) for value in service_ids
+                        ):
+                            raise ValueError("Выберите услуги для кейса")
+                        known_services = {
+                            row["id"]
+                            for row in db.execute(
+                                "SELECT id FROM content WHERE kind='service'"
+                            )
+                        }
+                        if not set(service_ids) <= known_services:
+                            raise ValueError("Одна из выбранных услуг удалена")
+                        item["service_ids"] = list(dict.fromkeys(service_ids))
                         steps = data.get("steps", [])
                         if not isinstance(steps, list) or len(steps) > 10:
                             raise ValueError("Не более 10 этапов")
@@ -543,8 +603,56 @@ class Handler(BaseHTTPRequestHandler):
                         (str(data.get("id", "")),),
                     )
                     return self.send(200, {"ok": True})
+                if path == "/api/admin/founders":
+                    settings = json.loads(
+                        db.execute(
+                            "SELECT data FROM settings WHERE id=1"
+                        ).fetchone()[0]
+                    )
+                    founders = settings.get("founders", [])
+                    target = next(
+                        (
+                            item
+                            for item in founders
+                            if item["id"] == data.get("id")
+                        ),
+                        None,
+                    )
+                    if target is None:
+                        return self.send(
+                            404, {"error": "Основатель не найден"}
+                        )
+                    if not str(data.get("name", "")).strip():
+                        raise ValueError("Укажите имя основателя")
+                    photo = str(data.get("photo", ""))
+                    if photo and (
+                        not photo.startswith("/media/")
+                        or not MEDIA_NAME.fullmatch(photo[7:])
+                        or not (UPLOAD_DIR / photo[7:]).is_file()
+                    ):
+                        raise ValueError("Выберите загруженную фотографию")
+                    for key, limit in {
+                        "name": 150,
+                        "role": 300,
+                        "bio": 8000,
+                        "quote": 4000,
+                        "photo_alt": 300,
+                    }.items():
+                        target[key] = str(data.get(key, ""))[:limit].strip()
+                    target["photo"] = photo
+                    settings["founders"] = founders
+                    db.execute(
+                        "UPDATE settings SET data=? WHERE id=1",
+                        (json.dumps(settings, ensure_ascii=False),),
+                    )
+                    return self.send(200, target)
                 if path == "/api/admin/settings":
-                    obj = {
+                    current_settings = json.loads(
+                        db.execute(
+                            "SELECT data FROM settings WHERE id=1"
+                        ).fetchone()[0]
+                    )
+                    obj = current_settings | {
                         k: str(data.get(k, ""))[:5000]
                         for k in [
                             "about",
@@ -552,8 +660,24 @@ class Handler(BaseHTTPRequestHandler):
                             "email",
                             "address",
                             "requisites",
+                            "telegram",
+                            "whatsapp",
                         ]
                     }
+                    phone_digits = re.sub(r"\D", "", obj["phone"])
+                    if obj["phone"] and not 7 <= len(phone_digits) <= 15:
+                        raise ValueError("Введите телефон: от 7 до 15 цифр")
+                    telegram = obj["telegram"].strip()
+                    if telegram and not re.fullmatch(
+                        r"@[A-Za-z0-9_]{5,32}", telegram
+                    ):
+                        raise ValueError("Telegram: укажите @username")
+                    whatsapp = re.sub(r"\D", "", obj["whatsapp"])
+                    if obj["whatsapp"] and not 7 <= len(whatsapp) <= 15:
+                        raise ValueError("WhatsApp: укажите номер телефона")
+                    obj["business_hours"] = validate_hours(
+                        data.get("business_hours", DEFAULT_HOURS)
+                    )
                     faq = data.get("faq", [])
                     if not isinstance(faq, list) or len(faq) > 20:
                         raise ValueError("Не более 20 вопросов")

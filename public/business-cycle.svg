@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 520" role="group" aria-labelledby="cycle-graphic-title cycle-graphic-desc">
+  <title id="cycle-graphic-title">Жизненный цикл компании</title>
+  <desc id="cycle-graphic-desc">Выберите этап, чтобы посмотреть услуги компании. Основная линия показывает старт, рост, зрелость, спад и банкротство. Бирюзовая ветвь показывает сценарий возрождения.</desc>
+  <defs>
+    <marker id="cycle-axis-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto"><path d="m1 1 6 3-6 3" fill="none" stroke="#99a8b7" stroke-width="1"/></marker>
+    <marker id="cycle-return-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="m2 1 6 4-6 4" fill="none" stroke="#087f73" stroke-width="1.4"/></marker>
+  </defs>
+  <g fill="#788595" font-family="DejaVu Sans, Arial, sans-serif" font-size="12">
+    <text x="70" y="30" letter-spacing="1.3">ОБЪЁМ ФИНАНСИРОВАНИЯ</text>
+    <text x="1327" y="499" text-anchor="end" letter-spacing="1.3">ВРЕМЯ</text>
+  </g>
+  <path d="M64 463V52M64 463H1330" fill="none" stroke="#ced7df" stroke-width="1" marker-end="url(#cycle-axis-arrow)"/>
+  <path d="M64 463V52" fill="none" stroke="#ced7df" stroke-width="1" marker-end="url(#cycle-axis-arrow)"/>
+  <path d="M83 409C194 405 215 318 305 224S470 99 571 107S743 170 836 238S1012 377 1153 392C1202 400 1248 402 1280 399" fill="none" stroke="#101d30" stroke-width="2.6" stroke-linecap="round"/>
+  <path d="M1011 355C1127 364 1213 236 1320 53" fill="none" stroke="#087f73" stroke-width="2.3" stroke-dasharray="9 7" marker-end="url(#cycle-return-arrow)"/>
+  <g fill="#101d30" stroke="#fff" stroke-width="3">
+    <circle cx="83" cy="409" r="5"/><circle cx="305" cy="224" r="5"/>
+    <circle cx="571" cy="107" r="5"/><circle cx="836" cy="238" r="5"/>
+    <circle cx="1280" cy="399" r="5"/>
+  </g>
+  <circle cx="1011" cy="355" r="4" fill="#087f73" stroke="#fff" stroke-width="2"/>
+  <g stroke="#c8d3dd" stroke-width="1" fill="none">
+    <path d="M305 224 323 248H338"/><path d="M836 238 856 215H877"/>
+  </g>
+  <a href="/services?stage=start" data-cycle-stage="start" class="cycle-stage-node" aria-label="Старт: посмотреть услуги">
+    <rect class="stage-hit-area" x="102" y="403" width="146" height="55" fill="transparent"/>
+    <text class="stage-name" x="110" y="443" fill="#101d30" font-family="DejaVu Sans, Arial, sans-serif" font-size="22">Старт</text>
+    <path class="stage-underline" d="M110 453h130" stroke="#d5dee6" stroke-width="1"/>
+  </a>
+  <a href="/services?stage=growth" data-cycle-stage="growth" class="cycle-stage-node selected" aria-current="step" aria-label="Рост: посмотреть услуги">
+    <rect class="stage-hit-area" x="336" y="239" width="146" height="55" fill="transparent"/>
+    <text class="stage-name" x="344" y="279" fill="#101d30" font-family="DejaVu Sans, Arial, sans-serif" font-size="22">Рост</text>
+    <path class="stage-underline" d="M344 289h130" stroke="#d5dee6" stroke-width="1"/>
+  </a>
+  <a href="/services?stage=maturity" data-cycle-stage="maturity" class="cycle-stage-node" aria-label="Зрелость: посмотреть услуги">
+    <rect class="stage-hit-area" x="503" y="30" width="176" height="55" fill="transparent"/>
+    <text class="stage-name" x="511" y="70" fill="#101d30" font-family="DejaVu Sans, Arial, sans-serif" font-size="22">Зрелость</text>
+    <path class="stage-underline" d="M511 80h160" stroke="#d5dee6" stroke-width="1"/>
+  </a>
+  <a href="/services?stage=decline" data-cycle-stage="decline" class="cycle-stage-node" aria-label="Спад: посмотреть услуги">
+    <rect class="stage-hit-area" x="875" y="159" width="146" height="55" fill="transparent"/>
+    <text class="stage-name" x="883" y="199" fill="#101d30" font-family="DejaVu Sans, Arial, sans-serif" font-size="22">Спад</text>
+    <path class="stage-underline" d="M883 209h130" stroke="#d5dee6" stroke-width="1"/>
+  </a>
+  <a href="/services?stage=bankruptcy" data-cycle-stage="bankruptcy" class="cycle-stage-node" aria-label="Банкротство: посмотреть услуги">
+    <rect class="stage-hit-area" x="1043" y="398" width="241" height="55" fill="transparent"/>
+    <text class="stage-name" x="1051" y="438" fill="#101d30" font-family="DejaVu Sans, Arial, sans-serif" font-size="22">Банкротство</text>
+    <path class="stage-underline" d="M1051 448h225" stroke="#d5dee6" stroke-width="1"/>
+  </a>
+  <a href="/services?stage=revival" data-cycle-stage="revival" class="cycle-stage-node" aria-label="Возрождение: посмотреть услуги">
+    <rect class="stage-hit-area" x="1052" y="44" width="248" height="55" fill="transparent"/>
+    <text class="stage-name" x="1060" y="84" fill="#101d30" font-family="DejaVu Sans, Arial, sans-serif" font-size="22">Возрождение</text>
+    <path class="stage-underline" d="M1060 94h210" stroke="#d5dee6" stroke-width="1"/>
+  </a>
+</svg>

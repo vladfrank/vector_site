@@ -1243,3 +1243,778 @@ summary {
         padding: 25px;
     }
 }
+
+/* Схема жизненного цикла бизнеса сразу после новостей. */
+.lifecycle-section {
+    background: #fff;
+    border-bottom: 1px solid var(--line);
+}
+.lifecycle-wrap {
+    padding-top: 64px;
+    padding-bottom: 64px;
+}
+.lifecycle-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 40px;
+    margin-bottom: 32px;
+}
+.lifecycle-heading h2 {
+    margin: 0;
+}
+.lifecycle-heading > p {
+    max-width: 355px;
+    margin: 0 0 4px;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.7;
+}
+.lifecycle-figure {
+    margin: 0;
+    padding: 22px 24px 0;
+    border: 1px solid #e0e8ef;
+    border-radius: 16px;
+    background: linear-gradient(180deg, #fff, #f9fbfd);
+    overflow: hidden;
+}
+.lifecycle-diagram img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+.lifecycle-caption {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 20px 6px;
+    border-top: 1px solid #e5ebf1;
+}
+.lifecycle-caption p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--muted);
+}
+.lifecycle-caption .arrow {
+    white-space: nowrap;
+    font-size: 13px;
+}
+.lifecycle-mobile {
+    display: none;
+}
+@media (max-width: 780px) {
+    .lifecycle-wrap {
+        padding-top: 40px;
+        padding-bottom: 40px;
+    }
+    .lifecycle-heading {
+        display: block;
+        margin-bottom: 24px;
+    }
+    .lifecycle-heading > p {
+        margin-top: 18px;
+        max-width: none;
+    }
+    .lifecycle-figure {
+        padding: 24px 22px 0;
+        border-radius: 12px;
+    }
+    .lifecycle-diagram {
+        display: none;
+    }
+    .lifecycle-mobile {
+        display: block;
+    }
+    .cycle-stages {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .cycle-stages li {
+        position: relative;
+        display: flex;
+        gap: 16px;
+        padding-bottom: 26px;
+    }
+    .cycle-stages li::before {
+        content: "";
+        position: absolute;
+        top: 34px;
+        bottom: 0;
+        left: 17px;
+        width: 1px;
+        background: #d9e6e9;
+    }
+    .cycle-stages li:last-child::before {
+        display: none;
+    }
+    .cycle-node {
+        display: grid;
+        place-items: center;
+        width: 35px;
+        height: 35px;
+        flex: 0 0 35px;
+        border: 1px solid #cde7e3;
+        border-radius: 50%;
+        background: #f1faf8;
+        color: #087f73;
+        font-size: 11px;
+        font-variant-numeric: tabular-nums;
+    }
+    .cycle-stages h3,
+    .cycle-scenario h3 {
+        margin: 3px 0 7px;
+        font-size: 18px;
+    }
+    .cycle-stages p,
+    .cycle-scenario p {
+        margin: 0;
+        font-size: 13px;
+        line-height: 1.6;
+        color: var(--muted);
+        overflow-wrap: anywhere;
+    }
+    .cycle-scenarios {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding-bottom: 22px;
+    }
+    .cycle-scenarios-label {
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+    }
+    .cycle-scenario {
+        padding: 17px;
+        border: 1px solid #e2e9ef;
+        border-radius: 8px;
+    }
+    .cycle-scenario.revival {
+        border-color: #b5e1d9;
+        background: #f0faf7;
+    }
+    .cycle-scenario.revival h3 {
+        color: #087f73;
+    }
+    .lifecycle-caption {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
+    }
+}
+
+/* Схема без внешней карточки занимает всю ширину страницы. */
+.lifecycle-wrap {
+    max-width: none;
+    padding: 64px 0;
+}
+.lifecycle-wrap > .eyebrow,
+.lifecycle-heading,
+.lifecycle-caption {
+    margin-left: clamp(20px, 5vw, 80px);
+    margin-right: clamp(20px, 5vw, 80px);
+}
+.lifecycle-figure {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+}
+.lifecycle-diagram {
+    width: 100%;
+}
+.lifecycle-diagram img {
+    width: 100%;
+    height: auto;
+}
+.lifecycle-caption {
+    padding: 22px 0;
+}
+.service-cases {
+    margin: 8px 0 20px;
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
+}
+.service-cases-label {
+    display: block;
+    margin-bottom: 9px;
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+}
+.service-case-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 10px 0;
+    font-size: 14px;
+    line-height: 1.5;
+}
+.service-case-link:hover {
+    color: #087f73;
+}
+.service-case-link small {
+    display: block;
+    margin-top: 3px;
+    font-size: 10px;
+    color: var(--muted);
+}
+.card .service-case-link:last-child {
+    margin-top: 0;
+}
+.related-case-section {
+    margin-top: 56px;
+}
+.case-service-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 32px;
+}
+.call-cta .eyebrow {
+    color: #7ee3d8;
+    margin-bottom: 15px;
+}
+.call-cta .call-hours {
+    margin-top: 15px;
+    color: #9fb3c7;
+    font-size: 12px;
+}
+.call-cta-action {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 14px;
+}
+.phone-button {
+    font-size: clamp(18px, 2vw, 25px);
+    white-space: nowrap;
+}
+.call-alternative {
+    font-size: 12px;
+    color: #c8d5e4;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+.call-dialog {
+    position: relative;
+    width: min(540px, calc(100vw - 32px));
+    padding: 40px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    color: var(--navy);
+}
+.call-dialog::backdrop {
+    background: #101d30b3;
+}
+.call-dialog h2 {
+    font-size: 30px;
+}
+.call-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    padding: 2px 10px;
+}
+.next-call {
+    background: #f0faf7;
+    border-radius: 8px;
+    padding: 16px;
+    font-size: 14px;
+}
+.contact-method-link {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+    color: #087f73;
+}
+.contact-card .phone-button {
+    align-self: flex-start;
+    margin: 10px 0;
+}
+.hours-days {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+}
+.hours-days .check {
+    align-items: center;
+}
+.hours-days input {
+    margin-top: 0;
+}
+@media (max-width: 780px) {
+    .lifecycle-wrap {
+        padding: 40px 0;
+    }
+    .lifecycle-mobile {
+        padding: 0 24px;
+    }
+    .lifecycle-figure {
+        padding: 0;
+    }
+    .lifecycle-caption {
+        margin-top: 5px;
+    }
+    .call-cta-action {
+        align-items: flex-start;
+        margin-top: 24px;
+    }
+    .call-dialog {
+        padding: 35px 24px 26px;
+    }
+    .phone-button {
+        max-width: 100%;
+        font-size: 19px;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+}
+
+/* Первый экран: жизненный цикл компании с интерактивными этапами. */
+.cycle-hero {
+    background: #fff;
+    padding-bottom: 40px;
+}
+.cycle-hero-heading {
+    padding: 55px clamp(22px, 5vw, 90px) 0;
+}
+.cycle-hero-heading h1 {
+    font-size: clamp(38px, 4.6vw, 68px);
+    margin: 0;
+    line-height: 1.08;
+}
+.cycle-intro {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 35px;
+    margin-top: 25px;
+}
+.cycle-intro p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 17px;
+    max-width: 490px;
+}
+.cycle-intro span {
+    font-size: 12px;
+    color: #087f73;
+    max-width: 300px;
+}
+.cycle-visual {
+    overflow-x: auto;
+    padding: 12px 0 0;
+    scrollbar-width: thin;
+    scrollbar-color: #a8d9d2 #f4f8fa;
+}
+.cycle-visual > svg {
+    display: block;
+    width: 100%;
+    min-width: 860px;
+    height: auto;
+}
+.cycle-stage-node {
+    cursor: pointer;
+    outline-offset: 5px;
+}
+.cycle-stage-node rect {
+    transition:
+        fill 0.2s ease,
+        stroke 0.2s ease;
+}
+.cycle-stage-node:hover rect,
+.cycle-stage-node:focus rect {
+    fill: #eaf8f4;
+    stroke: #12b8a6;
+}
+.cycle-stage-node.selected rect {
+    fill: #101d30;
+    stroke: #101d30;
+}
+.cycle-stage-node.selected text {
+    fill: #fff;
+}
+.cycle-stage-node.selected path {
+    stroke: #6de2d4;
+}
+.cycle-stage-tabs {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 5px 20px 25px;
+}
+.cycle-stage-tabs button {
+    padding: 9px 18px;
+    border: 1px solid #dfe8ed;
+    border-radius: 30px;
+    background: white;
+    font-size: 12px;
+    color: var(--muted);
+}
+.cycle-stage-tabs button[aria-pressed="true"] {
+    color: white;
+    background: var(--navy);
+    border-color: var(--navy);
+}
+.cycle-panel {
+    margin: 0 clamp(22px, 5vw, 90px);
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+}
+.cycle-panel-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 25px;
+}
+.cycle-panel-heading h2 {
+    font-size: 34px;
+    margin: 0;
+}
+.cycle-panel-heading .eyebrow {
+    margin-bottom: 10px;
+}
+.cycle-count {
+    color: var(--muted);
+    font-size: 12px;
+    white-space: nowrap;
+}
+.cycle-service-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+.cycle-service-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+    padding: 21px;
+    border: 1px solid #e0e8ed;
+    border-radius: 10px;
+    background: #fff;
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+.cycle-service-card small {
+    display: block;
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.4;
+    margin-bottom: 9px;
+}
+.cycle-service-card strong {
+    display: block;
+    font-size: 15px;
+    line-height: 1.5;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+}
+.cycle-service-card:hover {
+    border-color: var(--teal);
+    background: #f5fcfa;
+}
+.cycle-link-arrow {
+    color: #087f73;
+    font-size: 22px;
+    flex: 0 0 auto;
+}
+.cycle-catalog-link {
+    margin: 25px clamp(22px, 5vw, 90px) 0;
+}
+.stage-filter-note {
+    color: var(--muted);
+    font-size: 13px;
+}
+.stage-filter-note a {
+    text-decoration: underline;
+}
+
+/* Основатели: загружаемые портреты и цитаты из материалов компании. */
+.about-intro {
+    padding-bottom: 30px;
+}
+.about-intro .lead {
+    max-width: 880px;
+    margin-top: 32px;
+}
+.founders-section {
+    padding-top: 25px;
+}
+.founders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+.founder-profile {
+    display: grid;
+    grid-template-columns: 300px minmax(0, 1fr);
+    gap: 44px;
+    padding: 32px;
+    border: 1px solid #e0e8ef;
+    border-radius: 14px;
+    background: #fff;
+}
+.founder-portrait {
+    overflow: hidden;
+    border-radius: 10px;
+    align-self: start;
+}
+.founder-photo {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    object-position: center top;
+}
+.founder-placeholder {
+    display: flex;
+    min-height: 320px;
+    aspect-ratio: 3 / 4;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    background: linear-gradient(140deg, #132b3e, #101d30);
+    color: #87e3d8;
+}
+.founder-placeholder span {
+    font-size: 68px;
+    font-weight: 300;
+    letter-spacing: -0.04em;
+}
+.founder-placeholder small {
+    color: #9ab5c6;
+    text-transform: uppercase;
+    letter-spacing: 0.17em;
+    font-size: 10px;
+}
+.founder-role {
+    color: #087f73;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+}
+.founder-info h3 {
+    font-size: 30px;
+    margin: 12px 0 24px;
+}
+.founder-bio {
+    font-size: 15px;
+    line-height: 1.85;
+    white-space: pre-line;
+    color: var(--muted);
+}
+.founder-info blockquote {
+    margin: 25px 0 0;
+    padding: 16px 0 0 20px;
+    border-left: 2px solid var(--teal);
+}
+.founder-info blockquote p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.8;
+}
+.founder-form {
+    margin-bottom: 25px;
+}
+.founder-upload-preview {
+    width: 200px;
+    max-width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.founder-upload-preview .founder-placeholder {
+    min-height: 0;
+}
+@media (max-width: 1000px) {
+    .cycle-service-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .founder-profile {
+        grid-template-columns: 230px minmax(0, 1fr);
+        gap: 28px;
+        padding: 25px;
+    }
+}
+@media (max-width: 780px) {
+    .cycle-hero-heading {
+        padding-top: 32px;
+    }
+    .cycle-intro {
+        display: block;
+        margin-top: 20px;
+    }
+    .cycle-intro p {
+        font-size: 15px;
+    }
+    .cycle-intro span {
+        display: block;
+        margin-top: 14px;
+    }
+    .cycle-stage-tabs {
+        justify-content: flex-start;
+        gap: 7px;
+    }
+    .cycle-stage-tabs button {
+        padding: 9px 13px;
+    }
+    .cycle-service-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .cycle-service-card {
+        padding: 17px;
+    }
+    .cycle-panel-heading h2 {
+        font-size: 28px;
+    }
+    .founder-profile {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 26px;
+        padding: 22px;
+    }
+    .founder-portrait {
+        width: 100%;
+        max-width: 320px;
+    }
+    .founder-placeholder {
+        min-height: 0;
+    }
+    .founder-info h3 {
+        font-size: 26px;
+    }
+}
+
+/* Сдержанная графика: подписи, выносные линии и типографический список. */
+.cycle-hero {
+    background: #fff;
+}
+.cycle-visual {
+    padding-top: 22px;
+}
+.cycle-stage-node rect,
+.cycle-stage-node:hover rect,
+.cycle-stage-node:focus rect,
+.cycle-stage-node.selected rect {
+    fill: transparent;
+    stroke: none;
+}
+.cycle-stage-node.selected text {
+    fill: #101d30;
+}
+.cycle-stage-node .stage-index {
+    fill: #8996a4;
+}
+.cycle-stage-node .stage-name {
+    font-weight: 400;
+}
+.cycle-stage-node .stage-underline {
+    stroke: #d5dee6;
+}
+.cycle-stage-node:hover .stage-name,
+.cycle-stage-node:focus .stage-name,
+.cycle-stage-node.selected .stage-name {
+    fill: #087f73;
+}
+.cycle-stage-node:hover .stage-underline,
+.cycle-stage-node:focus .stage-underline,
+.cycle-stage-node.selected .stage-underline {
+    stroke: #087f73;
+    stroke-width: 2;
+}
+.cycle-stage-node:focus {
+    outline: 1px solid #087f73;
+}
+.cycle-stage-tabs {
+    display: none;
+}
+.cycle-panel {
+    padding-top: 28px;
+}
+.cycle-panel-heading {
+    margin-bottom: 16px;
+}
+.cycle-panel-heading .eyebrow::before {
+    display: none;
+}
+.cycle-panel-heading .eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.13em;
+}
+.cycle-panel-heading h2 {
+    font-weight: 400;
+    font-size: 32px;
+}
+.cycle-service-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 48px;
+    row-gap: 0;
+}
+.cycle-service-card {
+    padding: 18px 0;
+    border: 0;
+    border-bottom: 1px solid #e0e6ec;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+}
+.cycle-service-card:hover {
+    border-color: #087f73;
+    background: transparent;
+}
+.cycle-service-card small {
+    font-size: 10px;
+    margin-bottom: 6px;
+}
+.cycle-service-card strong {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.55;
+}
+.cycle-link-arrow {
+    font-size: 18px;
+    color: #748695;
+}
+.cycle-service-card:hover .cycle-link-arrow {
+    color: #087f73;
+}
+@media (max-width: 780px) {
+    .cycle-stage-tabs {
+        display: flex;
+        justify-content: flex-start;
+        gap: 0 20px;
+        margin: 0 22px 24px;
+        border-bottom: 1px solid var(--line);
+    }
+    .cycle-stage-tabs button {
+        border: 0;
+        border-bottom: 2px solid transparent;
+        border-radius: 0;
+        padding: 12px 0;
+        background: transparent;
+        color: var(--muted);
+    }
+    .cycle-stage-tabs button[aria-pressed="true"] {
+        background: transparent;
+        border-color: #087f73;
+        color: #087f73;
+    }
+    .cycle-service-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0;
+    }
+    .cycle-service-card {
+        padding: 16px 0;
+    }
+    .cycle-service-card strong {
+        font-size: 15px;
+    }
+}

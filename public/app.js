@@ -44,7 +44,6 @@ const contactLabels = {
     email: "Email",
     telegram: "Telegram",
     whatsapp: "WhatsApp",
-    max: "Max",
     any: "Не указан",
 };
 const byKind = (k) => state.items.filter((x) => x.kind === k);
@@ -80,30 +79,103 @@ const image = (x, cls = "news-image") =>
 const tag = (x) =>
     `<span class="tag">${esc(x.category || "Экспертиза")}</span>${x.demo ? '<span class="tag demo">Демонстрационный материал</span>' : ""}`;
 
+function relatedCases(serviceId) {
+    return byKind("case").filter((item) => (item.service_ids || []).includes(serviceId));
+}
+
 function cards(items, section) {
-    return items.length
-        ? `<div class="grid ${section === "services" ? "two" : ""}">${items
-              .map(
-                  (x, i) => `<article class="card">
-<span class="number">${String(i + 1).padStart(2, "0")} / ${esc(x.kind === "service" ? "КОМПЕТЕНЦИИ" : x.kind === "case" ? "МАРШРУТ РЕШЕНИЯ" : "ПУБЛИКАЦИЯ")}</span>${section === "news" ? image(x) : tag(x)}<h3>
-<a href="/${section}/${encodeURIComponent(x.id)}">${esc(x.title)}</a>
-</h3>
-<p>${esc(x.summary)}</p>
-<a class="arrow" href="/${section}/${encodeURIComponent(x.id)}">${section === "cases" ? "Изучить маршрут" : "Подробнее"} ↗</a>
-</article>`,
-              )
-              .join("")}</div>`
-        : '<p class="empty">Материалы скоро появятся.</p>';
+    if (!items.length) return '<p class="empty">Материалы скоро появятся.</p>';
+    return `<div class="grid ${section === "services" ? "two" : ""}">${items
+        .map((item, index) => {
+            const cases =
+                section === "services" && state.visibility?.cases ? relatedCases(item.id) : [];
+            return `<article class="card">
+            <span class="number">${String(index + 1).padStart(2, "0")} / ${section === "services" ? "НАПРАВЛЕНИЕ" : section === "cases" ? "МАРШРУТ РЕШЕНИЯ" : "ПУБЛИКАЦИЯ"}</span>
+            ${section === "news" ? image(item) : tag(item)}
+            <h3><a href="/${section}/${encodeURIComponent(item.id)}">${esc(item.title)}</a></h3>
+            <p>${esc(item.summary)}</p>
+            ${
+                section === "services" && state.visibility?.cases
+                    ? `<div class="service-cases"><span class="service-cases-label">Кейсы по направлению · ${cases.length}</span>
+                ${
+                    cases.length
+                        ? cases
+                              .slice(0, 2)
+                              .map(
+                                  (project) =>
+                                      `<a class="service-case-link" href="/cases/${encodeURIComponent(project.id)}"><span>${esc(project.title)}${project.demo ? "<small>Демонстрационный пример</small>" : ""}</span><span aria-hidden="true">↗</span></a>`,
+                              )
+                              .join("")
+                        : '<p class="small">Кейсы по этому направлению пока не опубликованы.</p>'
+                }</div>`
+                    : ""
+            }
+            <a class="arrow" href="/${section}/${encodeURIComponent(item.id)}">${section === "services" ? "Подробнее об услуге" : section === "cases" ? "Изучить маршрут" : "Подробнее"} ↗</a>
+        </article>`;
+        })
+        .join("")}</div>`;
+}
+
+function phoneLink(className = "button", header = false) {
+    const contact = state.contact || {};
+    const id = header ? 'id="header-contact"' : "";
+    if (!contact.configured) return `<a ${id} class="${className}" href="/contacts">Контакты ↗</a>`;
+    return `<a ${id} class="${className}" data-call href="${esc(contact.phone_uri || "/contacts")}" aria-label="Позвонить: ${esc(contact.phone)}">${esc(contact.phone)} <span aria-hidden="true">↗</span></a>`;
+}
+
+function hoursText(hours) {
+    if (!hours) return "Расписание приёма звонков уточняется";
+    const names = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
+    const days = (hours.days || []).map((day) => names[day]).join(", ");
+    const zones = { "Asia/Novosibirsk": "Новосибирск", "Europe/Moscow": "Москва", UTC: "UTC" };
+    return days
+        ? `${days}: ${hours.start}–${hours.end} · ${zones[hours.timezone] || hours.timezone}`
+        : "Приём звонков временно приостановлен";
+}
+
+function callDialog(contact, error = "") {
+    $("#call-dialog")?.remove();
+    const dialog = document.createElement("dialog");
+    dialog.id = "call-dialog";
+    dialog.className = "call-dialog";
+    dialog.setAttribute("aria-labelledby", "call-dialog-title");
+    const lastFocus = document.activeElement;
+    dialog.innerHTML = `<button type="button" class="secondary call-close" aria-label="Закрыть">×</button>
+        <div class="eyebrow">Связаться с Вектором</div>
+        <h2 id="call-dialog-title">${error ? "Не удалось проверить расписание" : "Сейчас нерабочее время"}</h2>
+        <p>${error ? "Попробуйте позже или выберите другой способ связи." : "Пожалуйста, позвоните нам в рабочее время или свяжитесь другим способом."}</p>
+        ${!error && contact.next_open_label ? `<p class="next-call">Ближайшее время для звонка:<br><strong>${esc(contact.next_open_label)}</strong></p>` : ""}
+        ${!error ? `<p class="small">${esc(hoursText(contact.business_hours))}</p>` : ""}
+        <div class="actions"><a class="button" href="/contacts">Другие способы связи ↗</a></div>`;
+    document.body.append(dialog);
+    dialog.querySelector("button").onclick = () => dialog.close();
+    dialog.onclose = () => {
+        dialog.remove();
+        lastFocus?.focus();
+    };
+    dialog.showModal();
+}
+
+async function callCompany() {
+    try {
+        const contact = await api("contact");
+        state.contact = contact;
+        if (contact.is_open && contact.phone_uri) {
+            window.location.assign(contact.phone_uri);
+        } else if (contact.configured) {
+            callDialog(contact);
+        } else navigate("/contacts");
+    } catch (error) {
+        callDialog({}, error.message);
+    }
 }
 
 function cta() {
-    return `<div class="cta">
-<div>
-<h2>Начнём с вашей задачи</h2>
-<p>Опишите ситуацию — определим следующий шаг.</p>
-</div>
-<a class="button" href="/request">Обсудить задачу ↗</a>
-</div>`;
+    return `<div class="cta call-cta"><div><div class="eyebrow">Обсудим вашу задачу</div>
+        <h2>Начнём с разговора</h2><p>Позвоните нам — определим следующий шаг.</p>
+        <p class="call-hours">${esc(hoursText(state.contact?.business_hours))}</p></div>
+        <div class="call-cta-action">${phoneLink("button phone-button")}
+        <a class="call-alternative" href="/contacts">Другие способы связи ↗</a></div></div>`;
 }
 
 function faq() {
@@ -117,37 +189,124 @@ function faq() {
         .join("");
 }
 
+// Векторный оригинал: public/business-cycle.svg.
+const cycleGraphic = `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 520" role="group" aria-labelledby="cycle-graphic-title cycle-graphic-desc">
+  <title id="cycle-graphic-title">Жизненный цикл компании</title>
+  <desc id="cycle-graphic-desc">Выберите этап, чтобы посмотреть услуги компании. Основная линия показывает старт, рост, зрелость, спад и банкротство. Бирюзовая ветвь показывает сценарий возрождения.</desc>
+  <defs>
+    <marker id="cycle-axis-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto"><path d="m1 1 6 3-6 3" fill="none" stroke="#99a8b7" stroke-width="1"/></marker>
+    <marker id="cycle-return-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="m2 1 6 4-6 4" fill="none" stroke="#087f73" stroke-width="1.4"/></marker>
+  </defs>
+  <g fill="#788595" font-family="DejaVu Sans, Arial, sans-serif" font-size="12">
+    <text x="70" y="30" letter-spacing="1.3">ОБЪЁМ ФИНАНСИРОВАНИЯ</text>
+    <text x="1327" y="499" text-anchor="end" letter-spacing="1.3">ВРЕМЯ</text>
+  </g>
+  <path d="M64 463V52M64 463H1330" fill="none" stroke="#ced7df" stroke-width="1" marker-end="url(#cycle-axis-arrow)"/>
+  <path d="M64 463V52" fill="none" stroke="#ced7df" stroke-width="1" marker-end="url(#cycle-axis-arrow)"/>
+  <path d="M83 409C194 405 215 318 305 224S470 99 571 107S743 170 836 238S1012 377 1153 392C1202 400 1248 402 1280 399" fill="none" stroke="#101d30" stroke-width="2.6" stroke-linecap="round"/>
+  <path d="M1011 355C1127 364 1213 236 1320 53" fill="none" stroke="#087f73" stroke-width="2.3" stroke-dasharray="9 7" marker-end="url(#cycle-return-arrow)"/>
+  <g fill="#101d30" stroke="#fff" stroke-width="3">
+    <circle cx="83" cy="409" r="5"/><circle cx="305" cy="224" r="5"/>
+    <circle cx="571" cy="107" r="5"/><circle cx="836" cy="238" r="5"/>
+    <circle cx="1280" cy="399" r="5"/>
+  </g>
+  <circle cx="1011" cy="355" r="4" fill="#087f73" stroke="#fff" stroke-width="2"/>
+  <g stroke="#c8d3dd" stroke-width="1" fill="none">
+    <path d="M305 224 323 248H338"/><path d="M836 238 856 215H877"/>
+  </g>
+  <a href="/services?stage=start" data-cycle-stage="start" class="cycle-stage-node" aria-label="Старт: посмотреть услуги">
+    <rect class="stage-hit-area" x="102" y="403" width="146" height="55" fill="transparent"/>
+    <text class="stage-name" x="110" y="443" fill="#101d30" font-family="DejaVu Sans, Arial, sans-serif" font-size="22">Старт</text>
+    <path class="stage-underline" d="M110 453h130" stroke="#d5dee6" stroke-width="1"/>
+  </a>
+  <a href="/services?stage=growth" data-cycle-stage="growth" class="cycle-stage-node selected" aria-current="step" aria-label="Рост: посмотреть услуги">
+    <rect class="stage-hit-area" x="336" y="239" width="146" height="55" fill="transparent"/>
+    <text class="stage-name" x="344" y="279" fill="#101d30" font-family="DejaVu Sans, Arial, sans-serif" font-size="22">Рост</text>
+    <path class="stage-underline" d="M344 289h130" stroke="#d5dee6" stroke-width="1"/>
+  </a>
+  <a href="/services?stage=maturity" data-cycle-stage="maturity" class="cycle-stage-node" aria-label="Зрелость: посмотреть услуги">
+    <rect class="stage-hit-area" x="503" y="30" width="176" height="55" fill="transparent"/>
+    <text class="stage-name" x="511" y="70" fill="#101d30" font-family="DejaVu Sans, Arial, sans-serif" font-size="22">Зрелость</text>
+    <path class="stage-underline" d="M511 80h160" stroke="#d5dee6" stroke-width="1"/>
+  </a>
+  <a href="/services?stage=decline" data-cycle-stage="decline" class="cycle-stage-node" aria-label="Спад: посмотреть услуги">
+    <rect class="stage-hit-area" x="875" y="159" width="146" height="55" fill="transparent"/>
+    <text class="stage-name" x="883" y="199" fill="#101d30" font-family="DejaVu Sans, Arial, sans-serif" font-size="22">Спад</text>
+    <path class="stage-underline" d="M883 209h130" stroke="#d5dee6" stroke-width="1"/>
+  </a>
+  <a href="/services?stage=bankruptcy" data-cycle-stage="bankruptcy" class="cycle-stage-node" aria-label="Банкротство: посмотреть услуги">
+    <rect class="stage-hit-area" x="1043" y="398" width="241" height="55" fill="transparent"/>
+    <text class="stage-name" x="1051" y="438" fill="#101d30" font-family="DejaVu Sans, Arial, sans-serif" font-size="22">Банкротство</text>
+    <path class="stage-underline" d="M1051 448h225" stroke="#d5dee6" stroke-width="1"/>
+  </a>
+  <a href="/services?stage=revival" data-cycle-stage="revival" class="cycle-stage-node" aria-label="Возрождение: посмотреть услуги">
+    <rect class="stage-hit-area" x="1052" y="44" width="248" height="55" fill="transparent"/>
+    <text class="stage-name" x="1060" y="84" fill="#101d30" font-family="DejaVu Sans, Arial, sans-serif" font-size="22">Возрождение</text>
+    <path class="stage-underline" d="M1060 94h210" stroke="#d5dee6" stroke-width="1"/>
+  </a>
+</svg>
+`;
+
+function cycleServices(stageId) {
+    const stage = (state.cycle_stages || []).find((item) => item.id === stageId);
+    return stage
+        ? stage.service_ids
+              .map((id) => byKind("service").find((item) => item.id === id))
+              .filter(Boolean)
+        : [];
+}
+
+function cyclePanel(stageId) {
+    const stage = (state.cycle_stages || []).find((item) => item.id === stageId);
+    if (!stage) return "";
+    const services = cycleServices(stageId);
+    return `<div class="cycle-panel-heading"><div><div class="eyebrow">Решения для этапа</div>
+        <h2>${esc(stage.title)}</h2></div><span class="cycle-count">Услуг: ${services.length}</span></div>
+        ${services.length ? `<div class="cycle-service-grid">${services.map((item) => `<a class="cycle-service-card" href="/services/${encodeURIComponent(item.id)}"><span><small>${esc(item.category)}</small><strong>${esc(item.title)}</strong></span><span class="cycle-link-arrow" aria-hidden="true">↗</span></a>`).join("")}</div>` : `<p class="lead">${esc(stage.description || "")}</p><a class="button" href="/services">Все услуги ↗</a>`}`;
+}
+
+function businessCycle() {
+    const stages = state.cycle_stages || [];
+    return `<section class="lifecycle-section cycle-hero" aria-labelledby="lifecycle-title">
+        <div class="cycle-hero-heading"><div class="eyebrow">ЦУКЗ Вектор</div>
+            <h1 id="lifecycle-title">Создаем решения<br>для сложного бизнеса</h1>
+            <div class="cycle-intro"><p>Всегда рядом, когда меняются задачи и масштабы.</p>
+            <span>Выберите этап на схеме — откроем соответствующие услуги.</span></div>
+        </div>
+        <div class="cycle-visual">${cycleGraphic}</div>
+        <div class="cycle-stage-tabs" aria-label="Этапы жизненного цикла">${stages.map((stage) => `<button type="button" data-cycle-stage="${esc(stage.id)}" aria-pressed="${stage.id === "growth"}">${esc(stage.title)}</button>`).join("")}</div>
+        <div id="cycle-panel" class="cycle-panel" aria-live="polite">${cyclePanel("growth")}</div>
+        <div class="cycle-catalog-link"><a class="arrow" href="/services">Все направления и услуги ↗</a></div>
+    </section>`;
+}
+
+function setupCycle() {
+    const region = document.querySelector(".cycle-hero");
+    if (!region) return;
+    const select = (id) => {
+        region.querySelectorAll("[data-cycle-stage]").forEach((element) => {
+            const active = element.dataset.cycleStage === id;
+            element.classList.toggle("selected", active);
+            if (element.tagName.toLowerCase() === "button")
+                element.setAttribute("aria-pressed", String(active));
+            else if (active) element.setAttribute("aria-current", "step");
+            else element.removeAttribute("aria-current");
+        });
+        region.querySelector("#cycle-panel").innerHTML = cyclePanel(id);
+    };
+    region.querySelectorAll("[data-cycle-stage]").forEach((element) => {
+        element.onclick = (event) => {
+            event.preventDefault();
+            select(element.dataset.cycleStage);
+        };
+    });
+    select("growth");
+}
+
 function home() {
-    return `<section class="hero news-only">
-<div id="hero-news" class="hero-news-content">
-</div>
-<div class="controls news-controls">
-<button id="prev-news" aria-label="Предыдущая новость">←</button>
-<small id="slide-number">
-</small>
-<button id="next-news" aria-label="Следующая новость">→</button>
-</div>
-</section>
-<section class="wrap">
-<div class="section-head">
-<div class="eyebrow">01 / Компетенции</div>
-</div>
-<h2>Решения, которые двигают бизнес</h2>${cards(byKind("service").slice(0, 2), "services")}<div class="actions">
-<a href="/services" class="arrow">Все направления ↗</a>
-</div>
-</section>
-<section class="wrap">
-<div class="section-head">
-<div>
-<div class="eyebrow">02 / Практика решений</div>
-<h2>Каждая задача — свой маршрут</h2>
-</div>
-<a class="arrow" href="/cases">Все кейсы ↗</a>
-</div>${cards(byKind("case"), "cases")}</section>
-<section class="wrap">
-<div class="eyebrow">03 / Вопросы</div>
-<h2>До первого разговора</h2>${faq()}</section>
-<section class="wrap">${cta()}</section>`;
+    return `${businessCycle()}<section class="wrap">${cta()}</section>
+        <section class="wrap"><div class="eyebrow">Вопросы</div><h2>До первого разговора</h2>${faq()}</section>`;
 }
 
 // Один шаблон используется на главной и в предпросмотре редактора.
@@ -213,7 +372,7 @@ function previewNewsOnHome(news) {
     modal.innerHTML = `
         <div class="home-preview-toolbar">
             <div><strong id="home-preview-title">Предпросмотр на главной</strong>
-            <p class="small">Текущий текст и фотография. Новость не публикуется.</p></div>
+            <p class="small">Внутренний предпросмотр. Новости сейчас скрыты в публичной части.</p></div>
             <div class="row">
                 <button class="secondary" id="preview-desktop" type="button">Компьютер</button>
                 <button class="secondary" id="preview-mobile" type="button">Телефон</button>
@@ -231,6 +390,13 @@ function previewNewsOnHome(news) {
         state.items = [news, ...savedItems.filter((item) => item.id !== news.id)];
         const template = document.createElement("template");
         template.innerHTML = home();
+        if (!template.content.querySelector("#hero-news")) {
+            const previewNews = document.createElement("section");
+            previewNews.className = "hero news-only";
+            previewNews.innerHTML =
+                '<div id="hero-news" class="hero-news-content"></div><small id="slide-number"></small>';
+            template.content.querySelector(".cycle-hero").after(previewNews);
+        }
         template.content.querySelector("#hero-news").innerHTML = newsHeroContent(news);
         template.content.querySelector("#slide-number").textContent =
             `1 / ${byKind("news").length}`;
@@ -255,16 +421,21 @@ function previewNewsOnHome(news) {
 }
 
 function listing(section) {
-    const items = byKind(kinds[section]);
+    const stageId = new URLSearchParams(location.search).get("stage");
+    const stage = (state.cycle_stages || []).find((item) => item.id === stageId);
+    const items =
+        section === "services" && stage && stage.service_ids.length
+            ? cycleServices(stageId)
+            : byKind(kinds[section]);
     return `<section class="wrap">
 <div class="eyebrow">Вектор / ${labels[section]}</div>
-<h1>${{ services: "Компетенции для задач бизнеса", cases: "Маршруты сложных решений", news: "Новости и экспертиза" }[section]}</h1>
+<h1>${{ services: "Услуги", cases: "Маршруты сложных решений", news: "Новости и экспертиза" }[section]}</h1>
 <p class="lead">${section === "cases" ? "Пошаговые разборы: от исходной ситуации до результата. Примеры помечены как демонстрационные." : section === "services" ? "От восстановления финансовой устойчивости до развития и сделок." : "Публикации, подходы и события компании."}</p>${
         section === "cases"
             ? `<div class="filters" id="case-filters">
 <button class="active" data-category="">Все направления</button>${[...new Set(items.map((x) => x.category))].map((c) => `<button data-category="${esc(c)}">${esc(c)}</button>`).join("")}</div>`
             : ""
-    }<div id="list-cards">${cards(items, section)}</div>
+    }${stage && section === "services" ? `<p class="stage-filter-note">Этап: ${esc(stage.title)} · <a href="/services">Показать все услуги</a></p>` : ""}<div id="list-cards">${cards(items, section)}</div>
 </section>
 <section class="wrap">${cta()}</section>`;
 }
@@ -291,96 +462,65 @@ function detail(section, id) {
                   )
                   .join("")}</details>`
             : `<div class="article">${esc(x.body)}</div>`
-    }${x.demo ? '<p class="small">Демонстрационный материал: не подтверждает выполненный проект компании.</p>' : ""}</section>
+    }${section === "services" && state.visibility?.cases ? `<div class="related-case-section" id="cases"><div class="eyebrow">Практика по направлению</div><h2>Кейсы по услуге</h2>${cards(relatedCases(x.id), "cases")}</div>` : ""}
+    ${
+        section === "cases"
+            ? `<div class="case-service-links">${byKind("service")
+                  .filter((item) => (x.service_ids || []).includes(item.id))
+                  .map(
+                      (item) =>
+                          `<a class="button light" href="/services/${encodeURIComponent(item.id)}">${esc(item.title)} ↗</a>`,
+                  )
+                  .join("")}</div>`
+            : ""
+    }
+    ${x.demo ? '<p class="small">Демонстрационный материал: не подтверждает выполненный проект компании.</p>' : ""}</section>
 <section class="wrap">${cta()}</section>`;
 }
 
+// Старые ссылки /request ведут к актуальному способу обращения.
 function requestPage() {
-    return `<section class="wrap form-layout">
-<div>
-<div class="eyebrow">Первый шаг</div>
-<h1>Обсудим<br>вашу задачу</h1>
-<p class="lead">Расскажите, что происходит в бизнесе. Для первого обращения достаточно общей информации.</p>
-</div>
-<form id="request-form" class="panel">
-<label>Компания *<input name="company" maxlength="200" required autocomplete="organization">
-</label>
-<label>Ваше имя *<input name="name" required maxlength="150" autocomplete="name">
-</label>
-<label>Предпочтительный способ связи *
-<select name="contact_method" id="contact-method" required>
-<option value="">Выберите способ связи</option>
-<option value="phone">Телефон</option>
-<option value="email">Email</option>
-<option value="telegram">Telegram</option>
-<option value="whatsapp">WhatsApp</option>
-<option value="max">MAX</option>
-</select></label>
-<label><span id="contact-label">Контакт для связи *</span>
-<input name="contact" id="contact-value" required maxlength="200" autocomplete="off">
-</label>
-<label>Описание задачи<textarea name="message" maxlength="5000"></textarea>
-</label>
-<label class="honey" aria-hidden="true">Ваш сайт<input name="website" tabindex="-1" autocomplete="off">
-</label>
-<label class="check">
-<input name="consent" type="checkbox" required>
-<span>Согласен на обработку данных для ответа на обращение. <a href="/privacy" target="_blank" rel="noopener">Условия обработки</a>
-</span>
-</label>
-<button class="primary">Отправить обращение ↗</button>
-<p class="error" role="alert">
-</p>
-</form>
-</section>`;
+    return `<section class="wrap"><div class="eyebrow">Связаться с нами</div>
+        <h1>Обсудим вашу задачу</h1>${cta()}</section>`;
+}
+
+function founderPortrait(founder) {
+    if (founder.photo)
+        return `<img class="founder-photo" src="${esc(founder.photo)}" alt="${esc(founder.photo_alt || founder.name)}" loading="lazy">`;
+    const initials = String(founder.name || "")
+        .split(/\s+/)
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((part) => part[0])
+        .join("");
+    return `<div class="founder-placeholder" aria-label="Фото ${esc(founder.name)} пока не добавлено"><span>${esc(initials)}</span><small>ЦУКЗ Вектор</small></div>`;
 }
 
 function about() {
-    return `<section class="wrap">
-<div class="eyebrow">О компании</div>
-<h1>Всегда рядом,<br>когда меняются задачи<br>и масштабы.</h1>
-<p class="lead">${esc(state.settings.about)}</p>
-<div class="grid">
-<article class="card">
-<span class="number">01 / ФИНАНСЫ</span>
-<h3>Понимаем экономику</h3>
-<p>Анализируем денежные потоки, проверяем предпосылки и моделируем сценарии.</p>
-</article>
-<article class="card">
-<span class="number">02 / ПРАВО</span>
-<h3>Учитываем интересы</h3>
-<p>Помогаем согласовать условия и оформить решение между участниками.</p>
-</article>
-<article class="card">
-<span class="number">03 / УПРАВЛЕНИЕ</span>
-<h3>Выстраиваем процесс</h3>
-<p>Связываем диагностику, план действий и контроль исполнения.</p>
-</article>
-</div>
-<h2 class="actions">Команда и документы</h2>
-<p class="lead">Фотографии, подтверждённые сведения о специалистах и документы будут добавлены после согласования.</p>
-</section>
-<section class="wrap">${cta()}</section>`;
+    const founders = state.settings.founders || [];
+    return `<section class="wrap about-intro"><div class="eyebrow">О компании</div>
+        <h1>Создаем решения<br>для сложного бизнеса</h1>
+        <p class="lead">${esc(state.settings.about)}</p></section>
+        <section class="wrap founders-section"><div class="section-head"><div><div class="eyebrow">Команда</div><h2>Основатели</h2></div><p>Финансовая, правовая и управленческая экспертиза для задач бизнеса.</p></div>
+        <div class="founders-list">${founders.map((founder) => `<article class="founder-profile"><div class="founder-portrait">${founderPortrait(founder)}</div><div class="founder-info"><span class="founder-role">${esc(founder.role)}</span><h3>${esc(founder.name)}</h3><p class="founder-bio">${esc(founder.bio)}</p>${founder.quote ? `<blockquote><p>«${esc(founder.quote)}»</p></blockquote>` : ""}</div></article>`).join("")}</div></section>
+        <section class="wrap">${cta()}</section>`;
 }
 
 function contacts() {
-    return `<section class="wrap">
-<div class="eyebrow">Контакты</div>
-<h1>Давайте начнём разговор</h1>
-<div class="grid two">
-<div class="card">
-<h3>Связаться с командой</h3>
-<p>${esc(state.settings.phone || "Телефон будет добавлен")}</p>
-<p>${esc(state.settings.email || "Email будет добавлен")}</p>
-<p>${esc(state.settings.address || "Адрес будет добавлен")}</p>
-<a class="button" href="/request">Оставить обращение ↗</a>
-</div>
-<div class="card">
-<h3>Реквизиты</h3>
-<p class="article">${esc(state.settings.requisites)}</p>
-</div>
-</div>
-</section>`;
+    const settings = state.settings;
+    const telegram = /^@[A-Za-z0-9_]{5,32}$/.test(settings.telegram || "")
+        ? settings.telegram.slice(1)
+        : "";
+    const whatsapp = String(settings.whatsapp || "").replace(/\D/g, "");
+    return `<section class="wrap"><div class="eyebrow">Контакты</div><h1>Давайте начнём разговор</h1>
+        <div class="grid two"><div class="card contact-card"><h3>Связаться с командой</h3>
+        ${phoneLink("button phone-button")}<p class="small">${esc(hoursText(state.contact?.business_hours))}</p>
+        ${settings.email ? `<a class="contact-method-link" href="mailto:${esc(settings.email)}">${esc(settings.email)} ↗</a>` : ""}
+        ${telegram ? `<a class="contact-method-link" href="https://t.me/${telegram}" target="_blank" rel="noopener">Telegram ↗</a>` : ""}
+        ${whatsapp ? `<a class="contact-method-link" href="https://wa.me/${whatsapp}" target="_blank" rel="noopener">WhatsApp ↗</a>` : ""}
+        <p>${esc(settings.address || "Адрес будет добавлен")}</p>
+        ${!settings.phone && !settings.email && !telegram && !whatsapp ? '<p class="small">Контакты компании скоро появятся.</p>' : ""}
+        </div><div class="card"><h3>Реквизиты</h3><p class="article">${esc(settings.requisites)}</p></div></div></section>`;
 }
 
 function privacy() {
@@ -411,6 +551,7 @@ function adminShell(tab, body) {
         ["services", "Услуги"],
         ["cases", "Кейсы"],
         ["news", "Новости"],
+        ["founders", "Основатели"],
         ["settings", "Настройки"],
     ]
         .map(([k, v]) => `<a class="${k === tab ? "active" : ""}" href="/admin/${k}">${v}</a>`)
@@ -560,7 +701,8 @@ async function admin(parts) {
             draw();
         }
     } else if (kinds[tab]) {
-        const items = (await api("admin/content")).filter((x) => x.kind === kinds[tab]);
+        const allContent = await api("admin/content");
+        const items = allContent.filter((x) => x.kind === kinds[tab]);
         if (id) {
             const x =
                 id === "new"
@@ -590,6 +732,16 @@ async function admin(parts) {
 </p>
 <button class="secondary" id="remove-photo" type="button">Убрать фотографию</button>
 </fieldset>`
+                        : ""
+                }${
+                    tab === "cases"
+                        ? `<fieldset class="photo-editor"><legend>Связанные услуги</legend>${allContent
+                              .filter((item) => item.kind === "service")
+                              .map(
+                                  (item) =>
+                                      `<label class="check"><input type="checkbox" name="service_ids" value="${esc(item.id)}" ${(x.service_ids || []).includes(item.id) ? "checked" : ""}>${esc(item.title)}</label>`,
+                              )
+                              .join("")}</fieldset>`
                         : ""
                 }${tab === "cases" ? area("Этапы кейса: название | текст, каждый этап с новой строки", "steps", (x.steps || []).map((s) => s.title + " | " + s.text.replace(/\n/g, " ")).join("\n")) : ""}<label class="check">
 <input name="demo" type="checkbox" ${x.demo ? "checked" : ""}>Демонстрационный материал</label>
@@ -666,6 +818,7 @@ ${tab === "news" ? '<button class="secondary" id="preview-home" type="button">П
                     kind: x.kind,
                     published: form.elements.published.checked,
                     demo: form.elements.demo.checked,
+                    service_ids: new FormData(form).getAll("service_ids"),
                     steps:
                         tab === "cases"
                             ? d.steps
@@ -754,19 +907,107 @@ ${tab === "news" ? '<button class="secondary" id="preview-home" type="button">П
                 }`,
             );
         }
+    } else if (tab === "founders") {
+        const founders = await api("admin/founders");
+        $("#main").innerHTML = adminShell(
+            tab,
+            `<h3>Основатели компании</h3><p class="small">Фото: JPEG, PNG или WebP до 5 МБ. Изменения появятся после сохранения карточки.</p>${founders.map((founder) => `<form class="panel founder-form" data-founder="${esc(founder.id)}"><div class="founder-editor-heading"><h3>${esc(founder.name)}</h3></div>${field("Имя", "name", founder.name)}${field("Роль", "role", founder.role)}${area("Биография", "bio", founder.bio)}${area("Цитата", "quote", founder.quote)}<fieldset class="photo-editor"><legend>Фотография</legend><label>Выбрать файл<input name="photo_file" type="file" accept="image/jpeg,image/png,image/webp"></label><input type="hidden" name="photo" value="${esc(founder.photo)}">${field("Описание фото для доступности", "photo_alt", founder.photo_alt || founder.name)}<div class="founder-upload-preview">${founderPortrait(founder)}</div><p class="upload-status" role="status"></p><button class="secondary remove-founder-photo" type="button">Убрать фото</button></fieldset><button class="primary">Сохранить карточку</button><p class="error" role="alert"></p></form>`).join("")}`,
+        );
+        document.querySelectorAll(".founder-form").forEach((form) => {
+            const upload = form.elements.photo_file;
+            const save = form.querySelector(".primary");
+            const status = form.querySelector(".upload-status");
+            const remove = form.querySelector(".remove-founder-photo");
+            upload.onchange = async () => {
+                const file = upload.files[0];
+                if (!file) return;
+                if (
+                    file.size > 5 * 1024 * 1024 ||
+                    !["image/jpeg", "image/png", "image/webp"].includes(file.type)
+                ) {
+                    status.textContent = "Выберите JPEG, PNG или WebP до 5 МБ.";
+                    upload.value = "";
+                    return;
+                }
+                save.disabled = true;
+                remove.disabled = true;
+                status.textContent = "Загружаем фотографию…";
+                try {
+                    const response = await fetch("/api/admin/upload", {
+                        method: "POST",
+                        headers: { "Content-Type": file.type, "X-CSRF-Token": csrf },
+                        body: file,
+                    });
+                    const result = await response.json();
+                    if (!response.ok) throw Error(result.error || "Ошибка загрузки");
+                    form.elements.photo.value = result.url;
+                    form.querySelector(".founder-upload-preview").innerHTML = founderPortrait({
+                        name: form.elements.name.value,
+                        photo: result.url,
+                        photo_alt: form.elements.photo_alt.value,
+                    });
+                    status.textContent = "Фото загружено. Сохраните карточку.";
+                } catch (error) {
+                    status.textContent = error.message;
+                } finally {
+                    save.disabled = false;
+                    remove.disabled = false;
+                    upload.value = "";
+                }
+            };
+            remove.onclick = () => {
+                form.elements.photo.value = "";
+                form.querySelector(".founder-upload-preview").innerHTML = founderPortrait({
+                    name: form.elements.name.value,
+                });
+                status.textContent = "Фото будет убрано после сохранения.";
+            };
+            form.onsubmit = async (event) => {
+                event.preventDefault();
+                try {
+                    const payload = Object.fromEntries(new FormData(form));
+                    delete payload.photo_file;
+                    await api("admin/founders", { id: form.dataset.founder, ...payload });
+                    await refresh();
+                    toast("Карточка основателя сохранена");
+                    form.querySelector(".error").textContent = "";
+                } catch (error) {
+                    form.querySelector(".error").textContent = error.message;
+                }
+            };
+        });
     } else if (tab === "settings") {
         const x = await api("admin/settings");
+        const hours = x.business_hours || {
+            timezone: "Asia/Novosibirsk",
+            days: [0, 1, 2, 3, 4],
+            start: "09:00",
+            end: "18:00",
+        };
         $("#main").innerHTML = adminShell(
             tab,
             `<h3>О компании и контакты</h3>
-<form id="settings-edit" class="panel">${area("Описание компании", "about", x.about)}${field("Телефон", "phone", x.phone)}${field("Email", "email", x.email)}${field("Адрес", "address", x.address)}${area("Реквизиты", "requisites", x.requisites)}${area("FAQ: вопрос | ответ, каждый вопрос с новой строки", "faq", (x.faq || []).map((v) => v.q + " | " + v.a.replace(/\n/g, " ")).join("\n"))}<button class="primary">Сохранить настройки</button>
+<form id="settings-edit" class="panel">${area("Описание компании", "about", x.about)}${field("Телефон", "phone", x.phone)}${field("Email", "email", x.email)}${field("Telegram (@username)", "telegram", x.telegram)}${field("WhatsApp (номер телефона)", "whatsapp", x.whatsapp)}
+<fieldset class="photo-editor"><legend>Когда принимать звонки</legend>
+<p class="small">Укажите часовой пояс компании. Интервал через полночь считается ночной сменой.</p>
+<label>Часовой пояс<select name="hours_timezone">${["Asia/Novosibirsk", "Europe/Moscow", "UTC"].map((zone) => `<option ${hours.timezone === zone ? "selected" : ""}>${zone}</option>`).join("")}${!["Asia/Novosibirsk", "Europe/Moscow", "UTC"].includes(hours.timezone) ? `<option selected>${esc(hours.timezone)}</option>` : ""}</select></label>
+<div class="hours-days">${["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"].map((name, index) => `<label class="check"><input type="checkbox" name="hours_days" value="${index}" ${hours.days.includes(index) ? "checked" : ""}>${name}</label>`).join("")}</div>
+<div class="row">${field("Начало", "hours_start", hours.start, "time")}${field("Окончание", "hours_end", hours.end, "time")}</div>
+<p class="small">Если снять все дни, звонки на сайте будут приостановлены.</p></fieldset>${field("Адрес", "address", x.address)}${area("Реквизиты", "requisites", x.requisites)}${area("FAQ: вопрос | ответ, каждый вопрос с новой строки", "faq", (x.faq || []).map((v) => v.q + " | " + v.a.replace(/\n/g, " ")).join("\n"))}<button class="primary">Сохранить настройки</button>
 <p class="error" role="alert">
 </p>
 </form>`,
         );
         $("#settings-edit").onsubmit = async (e) => {
             e.preventDefault();
-            const d = Object.fromEntries(new FormData(e.target));
+            const values = new FormData(e.target);
+            const d = Object.fromEntries(values);
+            d.business_hours = {
+                timezone: d.hours_timezone,
+                days: values.getAll("hours_days").map(Number),
+                start: d.hours_start,
+                end: d.hours_end,
+            };
             d.faq = d.faq
                 .split("\n")
                 .filter((s) => s.trim())
@@ -799,6 +1040,8 @@ ${tab === "news" ? '<button class="secondary" id="preview-home" type="button">П
 }
 async function refresh() {
     state = await api("public");
+    const node = $("#header-contact");
+    if (node) node.outerHTML = phoneLink("button compact", true);
 }
 async function render() {
     clearInterval(carousel);
@@ -824,6 +1067,13 @@ async function render() {
         if (a.pathname === "/" + parts[0]) a.setAttribute("aria-current", "page");
     });
     try {
+        if (
+            (parts[0] === "news" && !state.visibility?.news) ||
+            (parts[0] === "cases" && !state.visibility?.cases)
+        ) {
+            $("#main").innerHTML = notFound();
+            return;
+        }
         if (parts[0] === "admin") {
             await admin(parts);
             return;
@@ -843,7 +1093,10 @@ async function render() {
                             privacy,
                         }[parts[0]] || notFound
                     )();
-        if (path === "/") setupCarousel();
+        if (path === "/") {
+            setupCarousel();
+            setupCycle();
+        }
         if ($("#case-filters"))
             $("#case-filters").onclick = (e) => {
                 const b = e.target.closest("button");
@@ -876,50 +1129,6 @@ async function render() {
             };
             show(0);
         }
-        if ($("#contact-method")) {
-            const method = $("#contact-method");
-            const contact = $("#contact-value");
-            method.onchange = () => {
-                const selected = method.value;
-                const email = selected === "email";
-                contact.type = email ? "email" : "text";
-                contact.inputMode = email ? "email" : selected === "telegram" ? "text" : "tel";
-                contact.autocomplete = email ? "email" : selected === "telegram" ? "off" : "tel";
-                contact.placeholder = email
-                    ? "name@company.ru"
-                    : selected === "telegram"
-                      ? "@username или телефон"
-                      : "+7 900 000-00-00";
-                $("#contact-label").textContent = email
-                    ? "Email *"
-                    : selected === "telegram"
-                      ? "Telegram *"
-                      : "Телефон *";
-            };
-        }
-        if ($("#request-form"))
-            $("#request-form").onsubmit = async (e) => {
-                e.preventDefault();
-                const f = e.target,
-                    b = f.querySelector("button");
-                b.disabled = true;
-                b.textContent = "Отправляем…";
-                try {
-                    await api("requests", {
-                        ...Object.fromEntries(new FormData(f)),
-                        consent: f.elements.consent.checked,
-                    });
-                    f.innerHTML = `<div class="success">
-<h2>Обращение получено</h2>
-<p>Спасибо! Мы скоро свяжемся с вами выбранным способом.</p>
-<a class="arrow" href="/">На главную ↗</a>
-</div>`;
-                } catch (err) {
-                    f.querySelector(".error").textContent = err.message;
-                    b.disabled = false;
-                    b.textContent = "Отправить обращение ↗";
-                }
-            };
     } catch (err) {
         $("#main").innerHTML = `<section class="wrap">
 <h2>Не удалось загрузить страницу</h2>
@@ -945,6 +1154,12 @@ function navigate(path) {
 }
 document.addEventListener("click", (e) => {
     const a = e.target.closest("a");
+    if (a?.hasAttribute("data-call")) {
+        e.preventDefault();
+        callCompany();
+        return;
+    }
+    if (a && $("#call-dialog")) $("#call-dialog").close();
     if (
         !a ||
         a.target ||
