@@ -1596,6 +1596,9 @@ summary {
     gap: 35px;
     margin-top: 25px;
 }
+.cycle-intro b {
+    font-size: 20px;
+}
 .cycle-intro p {
     margin: 0;
     color: var(--muted);
@@ -2017,4 +2020,1897 @@ summary {
     .cycle-service-card strong {
         font-size: 15px;
     }
+}
+
+/* Главная: заметная шапка, компактная схема и услуги рядом. */
+body {
+    background: #f1f5f7;
+}
+header {
+    max-width: none;
+    min-height: 88px;
+    padding: 14px clamp(22px, 4vw, 64px);
+    background: #101d30;
+    border-bottom: 1px solid #31465a;
+    color: #fff;
+}
+header .brand {
+    font-size: 34px;
+    letter-spacing: 2px;
+    gap: 13px;
+}
+header .brand small {
+    font-size: 8px;
+    letter-spacing: 0.08em;
+    max-width: 250px;
+    line-height: 1.35;
+}
+header .mark {
+    font-size: 48px;
+    line-height: 1;
+    color: #27d0ba;
+}
+header nav {
+    font-size: 16px;
+    gap: 26px;
+}
+header nav a:not(.button) {
+    color: #edf4fa;
+    padding: 8px 0;
+}
+header nav a:not(.button):hover,
+header nav a[aria-current] {
+    color: #54dfcc;
+}
+header nav .button {
+    color: #101d30;
+    background: #27d0ba;
+    font-size: 15px;
+}
+header .menu {
+    color: #fff;
+    border-color: #597084;
+    background: transparent;
+}
+.cycle-hero {
+    --cycle-height: clamp(360px, calc(100svh - 280px), 490px);
+    background: #eaf2f4;
+    padding: 0 0 28px;
+}
+.cycle-hero-heading {
+    display: grid;
+    grid-template-columns: 1.25fr 1fr;
+    align-items: center;
+    gap: 35px;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 24px clamp(22px, 4vw, 64px) 22px;
+}
+.company-positioning {
+    margin: 0 0 9px;
+    color: #087f73;
+    font-size: 14px;
+    line-height: 1.5;
+    font-weight: 600;
+}
+.lifecycle-title {
+    padding-top: 10px;
+    font-weight: 500;
+}
+.cycle-hero-heading h1 {
+    font-size: clamp(27px, 2.5vw, 35px);
+    line-height: 1.2;
+    letter-spacing: -0.9px;
+    font-weight: 500;
+}
+.cycle-intro {
+    display: block;
+    margin: 0;
+    padding-left: 24px;
+    border-left: 3px solid #12b8a6;
+}
+.cycle-intro p {
+    font-size: 18px;
+    line-height: 1.5;
+    color: #153248;
+    margin: 0 0 10px;
+    max-width: none;
+}
+.cycle-intro span {
+    font-size: 16px;
+    line-height: 1.45;
+    color: #087f73;
+    font-weight: 600;
+    max-width: none;
+}
+.cycle-map-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 16px;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 0 clamp(22px, 4vw, 64px);
+}
+.cycle-map-card {
+    height: var(--cycle-height);
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #101d30;
+    border: 1px solid #234359;
+    border-radius: 8px;
+}
+.cycle-map-instruction {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 18px 22px 0;
+    color: #fff;
+}
+.cycle-map-instruction strong {
+    font-size: 16px;
+    font-weight: 500;
+}
+.instruction-detail {
+    color: #b8cbd8;
+    font-size: 13px;
+}
+.interaction-mark {
+    display: grid;
+    place-items: center;
+    width: 25px;
+    height: 25px;
+    margin-right: 2px;
+    background: #27d0ba;
+    color: #101d30;
+    border-radius: 3px;
+    font-size: 19px;
+}
+.cycle-map-card .cycle-visual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    padding: 0;
+}
+.cycle-map-card .cycle-visual > svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    max-height: 100%;
+}
+.cycle-map-card svg text {
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+.cycle-map-card .cycle-stage-node rect {
+    fill: #1b3248;
+    stroke: #476075;
+    stroke-width: 1;
+}
+.cycle-map-card .cycle-stage-node .stage-name {
+    fill: #f5f9fc;
+    font-weight: 500;
+}
+.cycle-map-card .cycle-stage-node .stage-hint {
+    fill: #a4d5d3;
+}
+.cycle-map-card .cycle-stage-node:hover rect,
+.cycle-map-card .cycle-stage-node:focus rect {
+    fill: #27495d;
+    stroke: #27d0ba;
+}
+.cycle-map-card .cycle-stage-node.selected rect {
+    fill: #27d0ba;
+    stroke: #27d0ba;
+}
+.cycle-map-card .cycle-stage-node.selected .stage-name,
+.cycle-map-card .cycle-stage-node.selected .stage-hint {
+    fill: #101d30;
+}
+.cycle-map-card .cycle-stage-node.selected .stage-dot {
+    fill: #27d0ba;
+    stroke: #27d0ba;
+    stroke-width: 6px;
+}
+.cycle-results {
+    height: var(--cycle-height);
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 1px solid #cfdee5;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.cycle-results .cycle-panel {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    margin: 0;
+    padding: 22px 22px 0;
+    border: 0;
+    overflow: hidden;
+}
+.cycle-results .cycle-panel-heading {
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    flex: 0 0 auto;
+}
+.cycle-results .cycle-panel-heading .eyebrow {
+    font-size: 12px;
+    color: #087f73;
+    letter-spacing: 0.02em;
+    margin-bottom: 5px;
+}
+.cycle-results .cycle-panel-heading h2 {
+    font-size: 27px;
+    line-height: 1.2;
+    font-weight: 500;
+}
+.cycle-results .cycle-count {
+    font-size: 12px;
+}
+.cycle-results .cycle-service-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    overflow-y: auto;
+    min-height: 0;
+    scrollbar-width: thin;
+    scrollbar-color: #aacfc9 #fff;
+    padding-right: 5px;
+}
+.cycle-results .cycle-service-card {
+    padding: 12px 0;
+    min-height: 52px;
+    gap: 10px;
+}
+.cycle-results .cycle-service-card small {
+    display: none;
+}
+.cycle-results .cycle-service-card strong {
+    font-size: 15px;
+    line-height: 1.45;
+    font-weight: 400;
+}
+.cycle-results .cycle-service-card:hover strong {
+    color: #087f73;
+}
+.cycle-results .cycle-catalog-link {
+    margin: 0;
+    padding: 17px 22px;
+    border-top: 1px solid #e0e8ed;
+    background: #f7fafb;
+    flex: 0 0 auto;
+}
+.cycle-results .cycle-catalog-link .button {
+    width: 100%;
+    text-align: center;
+    background: #101d30;
+    color: #fff;
+    font-size: 13px;
+    border-radius: 4px;
+    padding: 11px 12px;
+}
+.cycle-results .cycle-catalog-link .button:hover {
+    background: #1c4057;
+}
+.cycle-results .cycle-panel > .lead {
+    font-size: 15px;
+}
+.cycle-results .cycle-panel > .button {
+    align-self: flex-start;
+    margin-bottom: 15px;
+}
+.cycle-map-card .cycle-stage-tabs {
+    display: none;
+}
+.cycle-results .cycle-service-grid {
+    animation: stage-reveal 0.16s ease-out;
+}
+@keyframes stage-reveal {
+    from {
+        opacity: 0.4;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Все направления можно раскрыть и отфильтровать на одной странице. */
+.services-overview h1 {
+    font-size: clamp(32px, 3.5vw, 48px);
+}
+.services-overview .lead {
+    font-size: 17px;
+    max-width: 850px;
+}
+.service-filter-bar {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin: 32px 0 26px;
+    padding: 22px 24px;
+    background: #e2eeef;
+    border: 1px solid #ccdddd;
+    border-radius: 6px;
+}
+.service-filter-bar label {
+    width: min(520px, 100%);
+    margin: 0;
+    font-size: 14px;
+}
+.service-filter-bar select {
+    font-size: 15px;
+}
+.service-filter-bar p {
+    margin: 0 0 12px;
+    color: #466376;
+    font-size: 14px;
+    white-space: nowrap;
+}
+.direction-group {
+    padding: 0;
+    margin-bottom: 14px;
+    border: 1px solid #d2dfe5;
+    border-radius: 6px;
+    background: #fff;
+    overflow: hidden;
+}
+.direction-group summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 22px;
+    padding: 24px;
+    list-style: none;
+}
+.direction-group summary::-webkit-details-marker {
+    display: none;
+}
+.direction-group summary strong {
+    display: block;
+    font-size: 21px;
+    font-weight: 500;
+    line-height: 1.4;
+}
+.direction-group summary small {
+    display: block;
+    margin-top: 6px;
+    font-size: 13px;
+    color: var(--muted);
+}
+.direction-group[open] summary {
+    border-bottom: 1px solid #e0e8ed;
+    background: #f1f8f7;
+}
+.direction-toggle {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    flex: 0 0 32px;
+    border: 1px solid #abcfc7;
+    border-radius: 3px;
+}
+.direction-toggle::before,
+.direction-toggle::after {
+    content: "";
+    position: absolute;
+    top: 15px;
+    left: 9px;
+    width: 12px;
+    height: 1px;
+    background: #087f73;
+}
+.direction-toggle::after {
+    transform: rotate(90deg);
+}
+.direction-group[open] .direction-toggle::after {
+    transform: none;
+}
+.direction-services {
+    padding: 0 24px;
+}
+.direction-services a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 26px;
+    padding: 20px 0;
+    border-bottom: 1px solid #e4ebef;
+}
+.direction-services a:last-child {
+    border-bottom: 0;
+}
+.direction-services strong {
+    display: block;
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 1.5;
+}
+.direction-services small {
+    display: block;
+    color: var(--muted);
+    font-size: 14px;
+    margin-top: 6px;
+    line-height: 1.6;
+}
+.direction-services a > span:last-child {
+    font-size: 23px;
+    color: #087f73;
+}
+.direction-services a:hover strong {
+    color: #087f73;
+}
+@media (max-width: 1100px) {
+    header {
+        flex-wrap: wrap;
+    }
+    header .menu {
+        display: block;
+    }
+    header nav {
+        display: none;
+        width: 100%;
+        align-items: stretch;
+        flex-direction: column;
+    }
+    header nav.open {
+        display: flex;
+    }
+    header nav .button {
+        align-self: flex-start;
+    }
+    .cycle-hero-heading {
+        grid-template-columns: 1fr;
+        gap: 17px;
+    }
+    .cycle-intro {
+        display: flex;
+        gap: 25px;
+        align-items: center;
+        padding: 0;
+        border: 0;
+    }
+    .cycle-intro p {
+        font-size: 17px;
+        margin: 0;
+    }
+    .cycle-intro span {
+        font-size: 16px;
+    }
+    .cycle-map-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .cycle-map-card {
+        height: 390px;
+    }
+    .cycle-results {
+        height: auto;
+    }
+    .cycle-results .cycle-panel {
+        padding-bottom: 10px;
+    }
+    .cycle-results .cycle-service-grid {
+        overflow: visible;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: 25px;
+    }
+}
+@media (max-width: 640px) {
+    header {
+        min-height: 82px;
+        padding: 13px 20px;
+        gap: 14px;
+    }
+    header .brand {
+        font-size: 29px;
+        gap: 9px;
+    }
+    header .brand small {
+        max-width: 210px;
+        font-size: 7px;
+    }
+    header .mark {
+        font-size: 40px;
+    }
+    .cycle-hero-heading {
+        padding: 23px 20px 20px;
+        gap: 15px;
+    }
+    .cycle-hero-heading h1 {
+        font-size: 27px;
+        letter-spacing: -0.7px;
+    }
+    .cycle-hero-heading h1 br {
+        display: none;
+    }
+    .company-positioning {
+        font-size: 13px;
+    }
+    .cycle-intro {
+        display: block;
+    }
+    .cycle-intro p {
+        font-size: 17px;
+        margin-bottom: 9px;
+    }
+    .cycle-intro p br {
+        display: none;
+    }
+    .cycle-intro span {
+        font-size: 16px;
+    }
+    .cycle-map-layout {
+        padding: 0 14px;
+        gap: 12px;
+    }
+    .cycle-map-card {
+        height: auto;
+    }
+    .cycle-map-instruction {
+        padding: 16px 15px 0;
+        gap: 7px;
+    }
+    .cycle-map-instruction strong {
+        font-size: 15px;
+    }
+    .instruction-detail {
+        display: none;
+    }
+    .cycle-map-card .cycle-visual {
+        height: 160px;
+        flex: 0 0 160px;
+    }
+    .cycle-map-card .chart-stage-label {
+        display: none;
+    }
+    .cycle-map-card .chart-axis text {
+        display: none;
+    }
+    .cycle-map-card .cycle-stage-tabs {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 7px;
+        margin: 0;
+        padding: 0 14px 16px;
+        border: 0;
+    }
+    .cycle-map-card .cycle-stage-tabs button {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 3px;
+        min-height: 42px;
+        padding: 9px 8px;
+        border: 1px solid #476075;
+        border-radius: 3px;
+        background: #1b3248;
+        color: #f5f9fc;
+        font-size: 12px;
+    }
+    .cycle-map-card .cycle-stage-tabs button span {
+        color: #9cddd3;
+    }
+    .cycle-map-card .cycle-stage-tabs button[aria-pressed="true"] {
+        background: #27d0ba;
+        border-color: #27d0ba;
+        color: #101d30;
+    }
+    .cycle-map-card .cycle-stage-tabs button[aria-pressed="true"] span {
+        color: #101d30;
+    }
+    .cycle-results .cycle-service-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .cycle-results .cycle-panel {
+        padding: 20px;
+    }
+    .cycle-results .cycle-catalog-link {
+        padding: 14px 20px;
+    }
+    .service-filter-bar {
+        display: block;
+        padding: 18px;
+    }
+    .service-filter-bar p {
+        margin: 16px 0 0;
+    }
+    .direction-group summary {
+        padding: 19px;
+        gap: 14px;
+    }
+    .direction-group summary strong {
+        font-size: 18px;
+    }
+    .direction-services {
+        padding: 0 19px;
+    }
+    .direction-services strong {
+        font-size: 16px;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .cycle-results .cycle-service-grid {
+        animation: none;
+    }
+}
+
+header .brand {
+    line-height: 1.05;
+}
+.service-result-count {
+    color: #466376;
+    font-size: 14px;
+    margin: 0 0 18px;
+}
+@media (max-width: 400px) {
+    header .brand small {
+        max-width: 170px;
+    }
+}
+@media (max-width: 380px) {
+    .cycle-map-card .cycle-stage-tabs {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* Первый экран: жизненный цикл компании с интерактивными этапами. */
+.cycle-hero {
+    background: #fff;
+    padding-bottom: 40px;
+}
+.cycle-hero-heading {
+    padding: 55px clamp(22px, 5vw, 90px) 0;
+}
+.cycle-hero-heading :is(h1, h2) {
+    font-size: clamp(38px, 4.6vw, 68px);
+    margin: 0;
+    line-height: 1.08;
+}
+.cycle-intro {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 35px;
+    margin-top: 25px;
+}
+.cycle-intro p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 17px;
+    max-width: 490px;
+}
+.cycle-intro span {
+    font-size: 12px;
+    color: #087f73;
+    max-width: 300px;
+}
+.cycle-visual {
+    overflow-x: auto;
+    padding: 12px 0 0;
+    scrollbar-width: thin;
+    scrollbar-color: #a8d9d2 #f4f8fa;
+}
+.cycle-visual > svg {
+    display: block;
+    width: 100%;
+    min-width: 860px;
+    height: auto;
+}
+.cycle-stage-node {
+    cursor: pointer;
+    outline-offset: 5px;
+}
+.cycle-stage-node rect {
+    transition:
+        fill 0.2s ease,
+        stroke 0.2s ease;
+}
+.cycle-stage-node:hover rect,
+.cycle-stage-node:focus rect {
+    fill: #eaf8f4;
+    stroke: #12b8a6;
+}
+.cycle-stage-node.selected rect {
+    fill: #101d30;
+    stroke: #101d30;
+}
+.cycle-stage-node.selected text {
+    fill: #fff;
+}
+.cycle-stage-node.selected path {
+    stroke: #6de2d4;
+}
+.cycle-stage-tabs {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 5px 20px 25px;
+}
+.cycle-stage-tabs button {
+    padding: 9px 18px;
+    border: 1px solid #dfe8ed;
+    border-radius: 30px;
+    background: white;
+    font-size: 12px;
+    color: var(--muted);
+}
+.cycle-stage-tabs button[aria-pressed="true"] {
+    color: white;
+    background: var(--navy);
+    border-color: var(--navy);
+}
+.cycle-panel {
+    margin: 0 clamp(22px, 5vw, 90px);
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+}
+.cycle-panel-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 25px;
+}
+.cycle-panel-heading h2 {
+    font-size: 34px;
+    margin: 0;
+}
+.cycle-panel-heading .eyebrow {
+    margin-bottom: 10px;
+}
+.cycle-count {
+    color: var(--muted);
+    font-size: 12px;
+    white-space: nowrap;
+}
+.cycle-service-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+.cycle-service-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+    padding: 21px;
+    border: 1px solid #e0e8ed;
+    border-radius: 10px;
+    background: #fff;
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+.cycle-service-card small {
+    display: block;
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.4;
+    margin-bottom: 9px;
+}
+.cycle-service-card strong {
+    display: block;
+    font-size: 15px;
+    line-height: 1.5;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+}
+.cycle-service-card:hover {
+    border-color: var(--teal);
+    background: #f5fcfa;
+}
+.cycle-link-arrow {
+    color: #087f73;
+    font-size: 22px;
+    flex: 0 0 auto;
+}
+.cycle-catalog-link {
+    margin: 25px clamp(22px, 5vw, 90px) 0;
+}
+.stage-filter-note {
+    color: var(--muted);
+    font-size: 13px;
+}
+.stage-filter-note a {
+    text-decoration: underline;
+}
+
+/* Основатели: загружаемые портреты и цитаты из материалов компании. */
+.about-intro {
+    padding-bottom: 30px;
+}
+.about-intro .lead {
+    max-width: 880px;
+    margin-top: 32px;
+}
+.founders-section {
+    padding-top: 25px;
+}
+.founders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+.founder-profile {
+    display: grid;
+    grid-template-columns: 300px minmax(0, 1fr);
+    gap: 44px;
+    padding: 32px;
+    border: 1px solid #e0e8ef;
+    border-radius: 14px;
+    background: #fff;
+}
+.founder-portrait {
+    overflow: hidden;
+    border-radius: 10px;
+    align-self: start;
+}
+.founder-photo {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    object-position: center top;
+}
+.founder-placeholder {
+    display: flex;
+    min-height: 320px;
+    aspect-ratio: 3 / 4;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    background: linear-gradient(140deg, #132b3e, #101d30);
+    color: #87e3d8;
+}
+.founder-placeholder span {
+    font-size: 68px;
+    font-weight: 300;
+    letter-spacing: -0.04em;
+}
+.founder-placeholder small {
+    color: #9ab5c6;
+    text-transform: uppercase;
+    letter-spacing: 0.17em;
+    font-size: 10px;
+}
+.founder-role {
+    color: #087f73;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+}
+.founder-info h3 {
+    font-size: 30px;
+    margin: 12px 0 24px;
+}
+.founder-bio {
+    font-size: 15px;
+    line-height: 1.85;
+    white-space: pre-line;
+    color: var(--muted);
+}
+.founder-info blockquote {
+    margin: 25px 0 0;
+    padding: 16px 0 0 20px;
+    border-left: 2px solid var(--teal);
+}
+.founder-info blockquote p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.8;
+}
+.founder-form {
+    margin-bottom: 25px;
+}
+.founder-upload-preview {
+    width: 200px;
+    max-width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.founder-upload-preview .founder-placeholder {
+    min-height: 0;
+}
+@media (max-width: 1000px) {
+    .cycle-service-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .founder-profile {
+        grid-template-columns: 230px minmax(0, 1fr);
+        gap: 28px;
+        padding: 25px;
+    }
+}
+@media (max-width: 780px) {
+    .cycle-hero-heading {
+        padding-top: 32px;
+    }
+    .cycle-intro {
+        display: block;
+        margin-top: 20px;
+    }
+    .cycle-intro p {
+        font-size: 15px;
+    }
+    .cycle-intro span {
+        display: block;
+        margin-top: 14px;
+    }
+    .cycle-stage-tabs {
+        justify-content: flex-start;
+        gap: 7px;
+    }
+    .cycle-stage-tabs button {
+        padding: 9px 13px;
+    }
+    .cycle-service-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .cycle-service-card {
+        padding: 17px;
+    }
+    .cycle-panel-heading h2 {
+        font-size: 28px;
+    }
+    .founder-profile {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 26px;
+        padding: 22px;
+    }
+    .founder-portrait {
+        width: 100%;
+        max-width: 320px;
+    }
+    .founder-placeholder {
+        min-height: 0;
+    }
+    .founder-info h3 {
+        font-size: 26px;
+    }
+}
+
+/* Сдержанная графика: подписи, выносные линии и типографический список. */
+.cycle-hero {
+    background: #fff;
+}
+.cycle-visual {
+    padding-top: 22px;
+}
+.cycle-stage-node rect,
+.cycle-stage-node:hover rect,
+.cycle-stage-node:focus rect,
+.cycle-stage-node.selected rect {
+    fill: transparent;
+    stroke: none;
+}
+.cycle-stage-node.selected text {
+    fill: #101d30;
+}
+.cycle-stage-node .stage-index {
+    fill: #8996a4;
+}
+.cycle-stage-node .stage-name {
+    font-weight: 400;
+}
+.cycle-stage-node .stage-underline {
+    stroke: #d5dee6;
+}
+.cycle-stage-node:hover .stage-name,
+.cycle-stage-node:focus .stage-name,
+.cycle-stage-node.selected .stage-name {
+    fill: #087f73;
+}
+.cycle-stage-node:hover .stage-underline,
+.cycle-stage-node:focus .stage-underline,
+.cycle-stage-node.selected .stage-underline {
+    stroke: #087f73;
+    stroke-width: 2;
+}
+.cycle-stage-node:focus {
+    outline: 1px solid #087f73;
+}
+.cycle-stage-tabs {
+    display: none;
+}
+.cycle-panel {
+    padding-top: 28px;
+}
+.cycle-panel-heading {
+    margin-bottom: 16px;
+}
+.cycle-panel-heading .eyebrow::before {
+    display: none;
+}
+.cycle-panel-heading .eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.13em;
+}
+.cycle-panel-heading h2 {
+    font-weight: 400;
+    font-size: 32px;
+}
+.cycle-service-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 48px;
+    row-gap: 0;
+}
+.cycle-service-card {
+    padding: 18px 0;
+    border: 0;
+    border-bottom: 1px solid #e0e6ec;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+}
+.cycle-service-card:hover {
+    border-color: #087f73;
+    background: transparent;
+}
+.cycle-service-card small {
+    font-size: 10px;
+    margin-bottom: 6px;
+}
+.cycle-service-card strong {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.55;
+}
+.cycle-link-arrow {
+    font-size: 18px;
+    color: #748695;
+}
+.cycle-service-card:hover .cycle-link-arrow {
+    color: #087f73;
+}
+@media (max-width: 780px) {
+    .cycle-stage-tabs {
+        display: flex;
+        justify-content: flex-start;
+        gap: 0 20px;
+        margin: 0 22px 24px;
+        border-bottom: 1px solid var(--line);
+    }
+    .cycle-stage-tabs button {
+        border: 0;
+        border-bottom: 2px solid transparent;
+        border-radius: 0;
+        padding: 12px 0;
+        background: transparent;
+        color: var(--muted);
+    }
+    .cycle-stage-tabs button[aria-pressed="true"] {
+        background: transparent;
+        border-color: #087f73;
+        color: #087f73;
+    }
+    .cycle-service-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0;
+    }
+    .cycle-service-card {
+        padding: 16px 0;
+    }
+    .cycle-service-card strong {
+        font-size: 15px;
+    }
+}
+
+/* Главная: заметная шапка, компактная схема и услуги рядом. */
+body {
+    background: #f1f5f7;
+}
+header {
+    max-width: none;
+    min-height: 88px;
+    padding: 14px clamp(22px, 4vw, 64px);
+    background: #101d30;
+    border-bottom: 1px solid #31465a;
+    color: #fff;
+}
+header .brand {
+    font-size: 34px;
+    letter-spacing: 2px;
+    gap: 13px;
+}
+header .brand small {
+    font-size: 8px;
+    letter-spacing: 0.08em;
+    max-width: 250px;
+    line-height: 1.35;
+}
+header .mark {
+    font-size: 48px;
+    line-height: 1;
+    color: #27d0ba;
+}
+header nav {
+    font-size: 16px;
+    gap: 26px;
+}
+header nav a:not(.button) {
+    color: #edf4fa;
+    padding: 8px 0;
+}
+header nav a:not(.button):hover,
+header nav a[aria-current] {
+    color: #54dfcc;
+}
+header nav .button {
+    color: #101d30;
+    background: #27d0ba;
+    font-size: 15px;
+}
+header .menu {
+    color: #fff;
+    border-color: #597084;
+    background: transparent;
+}
+.cycle-hero {
+    --cycle-height: clamp(360px, calc(100svh - 280px), 490px);
+    background: #eaf2f4;
+    padding: 0 0 28px;
+}
+.cycle-hero-heading {
+    display: grid;
+    grid-template-columns: 1.25fr 1fr;
+    align-items: center;
+    gap: 35px;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 24px clamp(22px, 4vw, 64px) 22px;
+}
+.company-positioning {
+    margin: 0 0 9px;
+    color: #536b7c;
+    font-size: 14px;
+    line-height: 1.5;
+}
+.cycle-hero-heading :is(h1, h2) {
+    font-size: clamp(27px, 2.5vw, 35px);
+    line-height: 1.2;
+    letter-spacing: -0.9px;
+    font-weight: 500;
+}
+.cycle-intro {
+    display: block;
+    margin: 0;
+    padding-left: 24px;
+    border-left: 3px solid #12b8a6;
+}
+.cycle-intro p {
+    font-size: 18px;
+    line-height: 1.5;
+    color: #153248;
+    margin: 0 0 10px;
+    max-width: none;
+}
+.cycle-intro span {
+    font-size: 16px;
+    line-height: 1.45;
+    color: #087f73;
+    font-weight: 600;
+    max-width: none;
+}
+.cycle-map-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 16px;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 0 clamp(22px, 4vw, 64px);
+}
+.cycle-map-card {
+    height: var(--cycle-height);
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #101d30;
+    border: 1px solid #234359;
+    border-radius: 8px;
+}
+.cycle-map-instruction {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 18px 22px 0;
+    color: #fff;
+}
+.cycle-map-instruction strong {
+    font-size: 16px;
+    font-weight: 500;
+}
+.instruction-detail {
+    color: #b8cbd8;
+    font-size: 13px;
+}
+.interaction-mark {
+    display: grid;
+    place-items: center;
+    width: 25px;
+    height: 25px;
+    margin-right: 2px;
+    background: #27d0ba;
+    color: #101d30;
+    border-radius: 3px;
+    font-size: 19px;
+}
+.cycle-map-card .cycle-visual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    padding: 0;
+}
+.cycle-map-card .cycle-visual > svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    max-height: 100%;
+}
+.cycle-map-card svg text {
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+.cycle-map-card .cycle-stage-node rect {
+    fill: #1b3248;
+    stroke: #476075;
+    stroke-width: 1;
+}
+.cycle-map-card .cycle-stage-node .stage-name {
+    fill: #f5f9fc;
+    font-weight: 500;
+}
+.cycle-map-card .cycle-stage-node .stage-hint {
+    fill: #a4d5d3;
+}
+.cycle-map-card .cycle-stage-node:hover rect,
+.cycle-map-card .cycle-stage-node:focus rect {
+    fill: #27495d;
+    stroke: #27d0ba;
+}
+.cycle-map-card .cycle-stage-node.selected rect {
+    fill: #27d0ba;
+    stroke: #27d0ba;
+}
+.cycle-map-card .cycle-stage-node.selected .stage-name,
+.cycle-map-card .cycle-stage-node.selected .stage-hint {
+    fill: #101d30;
+}
+.cycle-map-card .cycle-stage-node.selected .stage-dot {
+    fill: #27d0ba;
+    stroke: #27d0ba;
+    stroke-width: 6px;
+}
+.cycle-results {
+    height: var(--cycle-height);
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 1px solid #cfdee5;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.cycle-results .cycle-panel {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    margin: 0;
+    padding: 22px 22px 0;
+    border: 0;
+    overflow: hidden;
+}
+.cycle-results .cycle-panel-heading {
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    flex: 0 0 auto;
+}
+.cycle-results .cycle-panel-heading .eyebrow {
+    font-size: 12px;
+    color: #087f73;
+    letter-spacing: 0.02em;
+    margin-bottom: 5px;
+}
+.cycle-results .cycle-panel-heading h2 {
+    font-size: 27px;
+    line-height: 1.2;
+    font-weight: 500;
+}
+.cycle-results .cycle-count {
+    font-size: 12px;
+}
+.cycle-results .cycle-service-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    overflow-y: auto;
+    min-height: 0;
+    scrollbar-width: thin;
+    scrollbar-color: #aacfc9 #fff;
+    padding-right: 5px;
+}
+.cycle-results .cycle-service-card {
+    padding: 12px 0;
+    min-height: 52px;
+    gap: 10px;
+}
+.cycle-results .cycle-service-card small {
+    display: none;
+}
+.cycle-results .cycle-service-card strong {
+    font-size: 15px;
+    line-height: 1.45;
+    font-weight: 400;
+}
+.cycle-results .cycle-service-card:hover strong {
+    color: #087f73;
+}
+.cycle-results .cycle-catalog-link {
+    margin: 0;
+    padding: 17px 22px;
+    border-top: 1px solid #e0e8ed;
+    background: #f7fafb;
+    flex: 0 0 auto;
+}
+.cycle-results .cycle-catalog-link .button {
+    width: 100%;
+    text-align: center;
+    background: #101d30;
+    color: #fff;
+    font-size: 13px;
+    border-radius: 4px;
+    padding: 11px 12px;
+}
+.cycle-results .cycle-catalog-link .button:hover {
+    background: #1c4057;
+}
+.cycle-results .cycle-panel > .lead {
+    font-size: 15px;
+}
+.cycle-results .cycle-panel > .button {
+    align-self: flex-start;
+    margin-bottom: 15px;
+}
+.cycle-map-card .cycle-stage-tabs {
+    display: none;
+}
+.cycle-results .cycle-service-grid {
+    animation: stage-reveal 0.16s ease-out;
+}
+@keyframes stage-reveal {
+    from {
+        opacity: 0.4;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Все направления можно раскрыть и отфильтровать на одной странице. */
+.services-overview h1 {
+    font-size: clamp(32px, 3.5vw, 48px);
+}
+.services-overview .lead {
+    font-size: 17px;
+    max-width: 850px;
+}
+.service-filter-bar {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin: 32px 0 26px;
+    padding: 22px 24px;
+    background: #e2eeef;
+    border: 1px solid #ccdddd;
+    border-radius: 6px;
+}
+.service-filter-bar label {
+    width: min(520px, 100%);
+    margin: 0;
+    font-size: 14px;
+}
+.service-filter-bar select {
+    font-size: 15px;
+}
+.service-filter-bar p {
+    margin: 0 0 12px;
+    color: #466376;
+    font-size: 14px;
+    white-space: nowrap;
+}
+.direction-group {
+    padding: 0;
+    margin-bottom: 14px;
+    border: 1px solid #d2dfe5;
+    border-radius: 6px;
+    background: #fff;
+    overflow: hidden;
+}
+.direction-group summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 22px;
+    padding: 24px;
+    list-style: none;
+}
+.direction-group summary::-webkit-details-marker {
+    display: none;
+}
+.direction-group summary strong {
+    display: block;
+    font-size: 21px;
+    font-weight: 500;
+    line-height: 1.4;
+}
+.direction-group summary small {
+    display: block;
+    margin-top: 6px;
+    font-size: 13px;
+    color: var(--muted);
+}
+.direction-group[open] summary {
+    border-bottom: 1px solid #e0e8ed;
+    background: #f1f8f7;
+}
+.direction-toggle {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    flex: 0 0 32px;
+    border: 1px solid #abcfc7;
+    border-radius: 3px;
+}
+.direction-toggle::before,
+.direction-toggle::after {
+    content: "";
+    position: absolute;
+    top: 15px;
+    left: 9px;
+    width: 12px;
+    height: 1px;
+    background: #087f73;
+}
+.direction-toggle::after {
+    transform: rotate(90deg);
+}
+.direction-group[open] .direction-toggle::after {
+    transform: none;
+}
+.direction-services {
+    padding: 0 24px;
+}
+.direction-services a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 26px;
+    padding: 20px 0;
+    border-bottom: 1px solid #e4ebef;
+}
+.direction-services a:last-child {
+    border-bottom: 0;
+}
+.direction-services strong {
+    display: block;
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 1.5;
+}
+.direction-services small {
+    display: block;
+    color: var(--muted);
+    font-size: 14px;
+    margin-top: 6px;
+    line-height: 1.6;
+}
+.direction-services a > span:last-child {
+    font-size: 23px;
+    color: #087f73;
+}
+.direction-services a:hover strong {
+    color: #087f73;
+}
+@media (max-width: 1100px) {
+    header {
+        flex-wrap: wrap;
+    }
+    header .menu {
+        display: block;
+    }
+    header nav {
+        display: none;
+        width: 100%;
+        align-items: stretch;
+        flex-direction: column;
+    }
+    header nav.open {
+        display: flex;
+    }
+    header nav .button {
+        align-self: flex-start;
+    }
+    .cycle-hero-heading {
+        grid-template-columns: 1fr;
+        gap: 17px;
+    }
+    .cycle-intro {
+        display: flex;
+        gap: 25px;
+        align-items: center;
+        padding: 0;
+        border: 0;
+    }
+    .cycle-intro p {
+        font-size: 17px;
+        margin: 0;
+    }
+    .cycle-intro span {
+        font-size: 16px;
+    }
+    .cycle-map-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .cycle-map-card {
+        height: 390px;
+    }
+    .cycle-results {
+        height: auto;
+    }
+    .cycle-results .cycle-panel {
+        padding-bottom: 10px;
+    }
+    .cycle-results .cycle-service-grid {
+        overflow: visible;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: 25px;
+    }
+}
+@media (max-width: 640px) {
+    header {
+        min-height: 82px;
+        padding: 13px 20px;
+        gap: 14px;
+    }
+    header .brand {
+        font-size: 29px;
+        gap: 9px;
+    }
+    header .brand small {
+        max-width: 210px;
+        font-size: 7px;
+    }
+    header .mark {
+        font-size: 40px;
+    }
+    .cycle-hero-heading {
+        padding: 23px 20px 20px;
+        gap: 15px;
+    }
+    .cycle-hero-heading :is(h1, h2) {
+        font-size: 27px;
+        letter-spacing: -0.7px;
+    }
+    .cycle-hero-heading :is(h1, h2) br {
+        display: none;
+    }
+    .company-positioning {
+        font-size: 13px;
+    }
+    .cycle-intro {
+        display: block;
+    }
+    .cycle-intro p {
+        font-size: 17px;
+        margin-bottom: 9px;
+    }
+    .cycle-intro p br {
+        display: none;
+    }
+    .cycle-intro span {
+        font-size: 16px;
+    }
+    .cycle-map-layout {
+        padding: 0 14px;
+        gap: 12px;
+    }
+    .cycle-map-card {
+        height: auto;
+    }
+    .cycle-map-instruction {
+        padding: 16px 15px 0;
+        gap: 7px;
+    }
+    .cycle-map-instruction strong {
+        font-size: 15px;
+    }
+    .instruction-detail {
+        display: none;
+    }
+    .cycle-map-card .cycle-visual {
+        height: 160px;
+        flex: 0 0 160px;
+    }
+    .cycle-map-card .chart-stage-label {
+        display: none;
+    }
+    .cycle-map-card .chart-axis text {
+        display: none;
+    }
+    .cycle-map-card .cycle-stage-tabs {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 7px;
+        margin: 0;
+        padding: 0 14px 16px;
+        border: 0;
+    }
+    .cycle-map-card .cycle-stage-tabs button {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 3px;
+        min-height: 42px;
+        padding: 9px 8px;
+        border: 1px solid #476075;
+        border-radius: 3px;
+        background: #1b3248;
+        color: #f5f9fc;
+        font-size: 12px;
+    }
+    .cycle-map-card .cycle-stage-tabs button span {
+        color: #9cddd3;
+    }
+    .cycle-map-card .cycle-stage-tabs button[aria-pressed="true"] {
+        background: #27d0ba;
+        border-color: #27d0ba;
+        color: #101d30;
+    }
+    .cycle-map-card .cycle-stage-tabs button[aria-pressed="true"] span {
+        color: #101d30;
+    }
+    .cycle-results .cycle-service-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .cycle-results .cycle-panel {
+        padding: 20px;
+    }
+    .cycle-results .cycle-catalog-link {
+        padding: 14px 20px;
+    }
+    .service-filter-bar {
+        display: block;
+        padding: 18px;
+    }
+    .service-filter-bar p {
+        margin: 16px 0 0;
+    }
+    .direction-group summary {
+        padding: 19px;
+        gap: 14px;
+    }
+    .direction-group summary strong {
+        font-size: 18px;
+    }
+    .direction-services {
+        padding: 0 19px;
+    }
+    .direction-services strong {
+        font-size: 16px;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .cycle-results .cycle-service-grid {
+        animation: none;
+    }
+}
+
+header .brand {
+    line-height: 1.05;
+}
+.service-result-count {
+    color: #466376;
+    font-size: 14px;
+    margin: 0 0 18px;
+}
+@media (max-width: 400px) {
+    header .brand small {
+        max-width: 170px;
+    }
+}
+@media (max-width: 380px) {
+    .cycle-map-card .cycle-stage-tabs {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* Первый экран: крупное слово переходит в знак в шапке при обычном скролле. */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.welcome-page > header { position: sticky; top: 0; z-index: 50; }
+.welcome { --welcome-header: 88px; --welcome-copy-opacity: 1; position: relative; height: calc(170svh - var(--welcome-header)); background: #101d30; color: #f5f9fc; }
+.welcome-sticky { position: sticky; top: var(--welcome-header); height: calc(100svh - var(--welcome-header)); min-height: 360px; overflow: hidden; padding: clamp(30px, 6vh, 70px) clamp(22px, 6vw, 96px); display: flex; flex-direction: column; justify-content: space-between; }
+.welcome-copy, .welcome-bottom { position: relative; z-index: 2; opacity: var(--welcome-copy-opacity); }
+.welcome-kicker { color: #9db6c9; font-size: 12px; letter-spacing: .13em; text-transform: uppercase; margin: 0 0 20px; }
+.welcome h1 { font-size: clamp(23px, 3vw, 42px); line-height: 1.2; font-weight: 400; letter-spacing: -.025em; margin: 0; }
+.welcome-word, .welcome-flight { font-family: Arial, Helvetica, sans-serif; font-weight: 800; line-height: 1.05; letter-spacing: 10px; font-size: clamp(60px, 17vw, 180px); white-space: nowrap; }
+.welcome-word { position: relative; z-index: 2; align-self: flex-start; }
+.welcome-flight { position: fixed; top: 0; left: 0; z-index: 60; pointer-events: none; color: #f5f9fc; transform-origin: top left; will-change: transform; }
+.welcome-flight[hidden] { display: none; }
+.welcome-bottom { display: flex; align-items: end; justify-content: space-between; gap: 24px; }
+.welcome-bottom p { font-size: clamp(16px, 1.7vw, 23px); line-height: 1.5; color: #b9cbd9; margin: 0; }
+.welcome-next { border: 0; border-bottom: 1px solid #547782; background: transparent; color: #f5f9fc; padding: 12px 0; font-size: 16px; display: flex; align-items: center; gap: 30px; }
+.welcome-next span { color: #27d0ba; font-size: 30px; line-height: 1; }
+.welcome-next:hover { color: #27d0ba; border-color: #27d0ba; }
+.welcome-vector { position: absolute; right: -3vw; top: -9vh; font-size: min(64vw, 750px); line-height: 1; color: #27d0ba; opacity: .09; pointer-events: none; }
+.welcome-page .cycle-hero { scroll-margin-top: 90px; }
+@media (max-width: 640px) {
+    .welcome { --welcome-header: 82px; height: calc(160svh - var(--welcome-header)); }
+    .welcome-sticky { padding: 32px 22px; min-height: 350px; }
+    .welcome-kicker { max-width: 270px; font-size: 10px; line-height: 1.7; }
+    .welcome-word { font-size: 17.8vw; }
+    .welcome-bottom { align-items: start; flex-direction: column; gap: 24px; }
+    .welcome-next { font-size: 15px; }
+    .welcome-vector { top: 15%; font-size: 100vw; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .welcome { height: calc(100svh - var(--welcome-header)); }
+    .welcome-flight { display: none; }
+}
+
+header .mark svg { display: block; width: .8em; height: .8em; }
+.welcome-vector { width: min(60vw, 680px); height: min(60vw, 680px); top: 4vh; right: 1vw; }
+.welcome-vector svg { display: block; width: 100%; height: 100%; }
+@media (max-width: 640px) { .welcome-vector { width: 100vw; height: 100vw; top: 12%; right: -22vw; } }
+@media (max-height: 560px) and (min-width: 641px) { .welcome-sticky { padding-block: 18px; } .welcome-word { font-size: min(14vw, 34svh); } .welcome-kicker { margin-bottom: 8px; } .welcome-bottom p { font-size: 16px; } }
+
+/* Название центра непосредственно над словом «ВЕКТОР». */
+.welcome-brand {
+    position: relative;
+    z-index: 2;
+    align-self: flex-start;
+    max-width: 100%;
+}
+.welcome-brand .welcome-kicker {
+    max-width: 720px;
+    margin: 0 0 16px;
+    color: #cce5e7;
+    font-size: clamp(14px, 1.4vw, 19px);
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: .07em;
+    opacity: var(--welcome-copy-opacity);
+}
+@media (max-width: 640px) {
+    .welcome-brand .welcome-kicker {
+        max-width: 310px;
+        margin-bottom: 12px;
+        font-size: 14px;
+        letter-spacing: .035em;
+    }
+}
+
+/* Подпись перемещается к логотипу вместе с названием. */
+.welcome-caption-flight {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 60;
+    margin: 0;
+    color: #cce5e7;
+    font-family: Arial, Helvetica, sans-serif;
+    text-transform: uppercase;
+    pointer-events: none;
+    transform-origin: top left;
+}
+.welcome-caption-flight[hidden] {
+    display: none;
+}
+
+/* Этапы: мягкие формы, живые признаки и три основных решения. */
+.cycle-map-card .stage-hit-area { rx: 20px; }
+.cycle-results { height: auto; min-height: var(--cycle-height); border-radius: 20px; }
+.cycle-results .cycle-panel { overflow: visible; padding-bottom: 22px; }
+.cycle-results .cycle-panel-heading { margin-bottom: 14px; }
+.stage-greeting { margin: 0 0 14px; color: #087f73; font-size: 18px; font-weight: 700; line-height: 1.4; }
+.stage-traits { margin: 0; padding: 0 0 0 18px; font-size: 15px; line-height: 1.55; color: #40566b; }
+.stage-traits li { padding-left: 3px; margin-bottom: 11px; }
+.stage-traits li::marker { color: #12b8a6; }
+.stage-services { margin-top: 14px; border-top: 1px solid #dfe8ee; padding-top: 16px; }
+.stage-services h3 { font-size: 14px; font-weight: 700; margin: 0 0 5px; color: #087f73; }
+.cycle-results .stage-services .cycle-service-grid { overflow: visible; padding: 0; }
+.cycle-results .stage-services .cycle-service-card { min-height: 0; padding: 12px 0; }
+.cycle-results .cycle-catalog-link { margin-top: auto; }
+.email-button { overflow-wrap: anywhere; }
+.cycle-map-card .cycle-stage-tabs button { border-radius: 18px; }
+/* Первый экран закреплён; содержимое поднимается поверх него без перехвата скролла. */
+.welcome-page { background: #101d30; }
+.welcome-page #main { position: relative; }
+.welcome-page .welcome { background: transparent; }
+.welcome-page .welcome-sticky { position: fixed; left: 0; right: 0; top: var(--welcome-header, 88px); z-index: 0; }
+.home-content { position: relative; z-index: 2; background: var(--bg); }
+/* Подвал закрывает закреплённую заставку и сохраняет контраст. */
+.welcome-page > footer {
+    position: relative;
+    z-index: 2;
+    background: var(--navy);
+    color: #fff;
+    margin-top: 0;
+}
+.home-content .cycle-hero { background: rgba(16, 29, 48, .93); color: #f5f9fc; padding-top: 14px; border-radius: 28px 28px 0 0; border-top: 1px solid #476075; }
+.home-content .cycle-hero .company-positioning { color: #27d0ba; }
+.home-content .cycle-hero .lifecycle-title, .home-content .cycle-hero .cycle-intro p { color: #dbe7f1; }
+.home-content .cycle-map-card { background: #14283ce8; border-radius: 20px; }
+.home-content .cycle-results { color: #101d30; }
+@media (min-width: 1101px) { .cycle-map-layout { grid-template-columns: minmax(0, 1.55fr) minmax(350px, 1fr); align-items: start; } }
+@media (max-width: 640px) {
+    .welcome-page .welcome-sticky { top: var(--welcome-header, 82px); }
+    .cycle-results { min-height: 0; }
+    .stage-traits { font-size: 15px; }
+    .home-content .cycle-hero { border-radius: 20px 20px 0 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .welcome-page .welcome-sticky { position: relative; top: 0; }
+    .welcome-page .welcome { height: auto; }
+}
+/* Общий фон остаётся виден за схемой; следующие разделы закрывают заставку. */
+.home-content { background: transparent; }
+.home-content .cycle-hero { background: rgba(16, 29, 48, .76); }
+.home-content > .wrap { max-width: none; background: var(--bg); padding-inline: max(5%, calc((100% - 1152px) / 2)); }
+
+/* Пропорции исходной белой версии, в текущей тёмной палитре. */
+@media (min-width: 1101px) {
+    .home-content .cycle-map-layout {
+        max-width: 1500px;
+        grid-template-columns: minmax(0, 1fr) 340px;
+        gap: 16px;
+        padding: 0 clamp(22px, 4vw, 64px);
+        margin-inline: auto;
+        align-items: start;
+    }
+    .home-content .cycle-map-card { height: var(--cycle-height); }
+}
+
+/* Высота следует за SVG: без полос сверху и снизу схемы. */
+@media (min-width: 641px) {
+    .home-content .cycle-map-card { height: auto; }
+    .home-content .cycle-map-card .cycle-visual {
+        height: auto;
+        flex: 0 0 auto;
+        padding: 0;
+    }
+    .home-content .cycle-map-card .cycle-visual > svg {
+        display: block;
+        width: 100%;
+        height: auto;
+        max-height: none;
+        aspect-ratio: 1100 / 440;
+    }
+    .home-content .cycle-map-instruction { padding-bottom: 16px; }
+}
+/* Убираем линию и затемнение поверх фоновой стрелки. */
+.home-content .cycle-hero {
+    border-top: none;
+    background: transparent;
 }

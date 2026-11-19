@@ -116,11 +116,12 @@ function cards(items, section) {
         .join("")}</div>`;
 }
 
-function phoneLink(className = "button", header = false) {
-    const contact = state.contact || {};
+// Адрес задаётся администратором; пустой адрес не превращаем в фиктивный mailto.
+function emailLink(className = "button", header = false) {
+    const email = String(state.settings.email || "").trim();
     const id = header ? 'id="header-contact"' : "";
-    if (!contact.configured) return `<a ${id} class="${className}" href="/contacts">Контакты ↗</a>`;
-    return `<a ${id} class="${className}" data-call href="${esc(contact.phone_uri || "/contacts")}" aria-label="Позвонить: ${esc(contact.phone)}">${esc(contact.phone)} <span aria-hidden="true">↗</span></a>`;
+    if (!email) return `<a ${id} class="${className}" href="/contacts">Связаться с нами ↗</a>`;
+    return `<a ${id} class="${className}" href="mailto:${esc(encodeURIComponent(email).replace(/%40/g, "@"))}" aria-label="Написать: ${esc(email)}">${header ? "Написать нам" : esc(email)} <span aria-hidden="true">↗</span></a>`;
 }
 
 function hoursText(hours) {
@@ -172,10 +173,9 @@ async function callCompany() {
 
 function cta() {
     return `<div class="cta call-cta"><div><div class="eyebrow">Обсудим вашу задачу</div>
-        <h2>Начнём с разговора</h2><p>Позвоните нам — определим следующий шаг.</p>
-        <p class="call-hours">${esc(hoursText(state.contact?.business_hours))}</p></div>
-        <div class="call-cta-action">${phoneLink("button phone-button")}
-        <a class="call-alternative" href="/contacts">Другие способы связи ↗</a></div></div>`;
+        <h2>Начнём с письма</h2><p>Расскажите, что происходит в бизнесе и какой результат вы хотите получить.<br>Мы свяжемся с вами, чтобы обсудить следующий шаг.</p></div>
+        <div class="call-cta-action">${emailLink("button email-button")}
+        <a class="call-alternative" href="/contacts">Контакты компании ↗</a></div></div>`;
 }
 
 function faq() {
@@ -191,59 +191,66 @@ function faq() {
 
 // Векторный оригинал: public/business-cycle.svg.
 const cycleGraphic = `
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 520" role="group" aria-labelledby="cycle-graphic-title cycle-graphic-desc">
-  <title id="cycle-graphic-title">Жизненный цикл компании</title>
-  <desc id="cycle-graphic-desc">Выберите этап, чтобы посмотреть услуги компании. Основная линия показывает старт, рост, зрелость, спад и банкротство. Бирюзовая ветвь показывает сценарий возрождения.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 440" role="group" aria-labelledby="cycle-graphic-title cycle-graphic-desc">
+  <title id="cycle-graphic-title">Найдите свой этап развития бизнеса</title>
+  <desc id="cycle-graphic-desc">Нажмите на название этапа: справа появятся услуги компании Вектор. Старт, рост, зрелость, спад, банкротство или возрождение.</desc>
   <defs>
-    <marker id="cycle-axis-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto"><path d="m1 1 6 3-6 3" fill="none" stroke="#99a8b7" stroke-width="1"/></marker>
-    <marker id="cycle-return-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="m2 1 6 4-6 4" fill="none" stroke="#087f73" stroke-width="1.4"/></marker>
+    <marker id="return-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="m2 1 6 4-6 4" fill="none" stroke="#27d0ba" stroke-width="1.5"/></marker>
   </defs>
-  <g fill="#788595" font-family="DejaVu Sans, Arial, sans-serif" font-size="12">
-    <text x="70" y="30" letter-spacing="1.3">ОБЪЁМ ФИНАНСИРОВАНИЯ</text>
-    <text x="1327" y="499" text-anchor="end" letter-spacing="1.3">ВРЕМЯ</text>
+  <rect width="1100" height="440" fill="#101d30"/>
+  <g class="chart-axis" fill="#a9bdcf" font-family="DejaVu Sans, Arial, sans-serif" font-size="12">
+    <text x="42" y="24">Объём финансирования</text><text x="1050" y="430" text-anchor="end">Время</text>
+    <path d="M40 415V38M40 415H1052" stroke="#496075" stroke-width="1" fill="none"/>
   </g>
-  <path d="M64 463V52M64 463H1330" fill="none" stroke="#ced7df" stroke-width="1" marker-end="url(#cycle-axis-arrow)"/>
-  <path d="M64 463V52" fill="none" stroke="#ced7df" stroke-width="1" marker-end="url(#cycle-axis-arrow)"/>
-  <path d="M83 409C194 405 215 318 305 224S470 99 571 107S743 170 836 238S1012 377 1153 392C1202 400 1248 402 1280 399" fill="none" stroke="#101d30" stroke-width="2.6" stroke-linecap="round"/>
-  <path d="M1011 355C1127 364 1213 236 1320 53" fill="none" stroke="#087f73" stroke-width="2.3" stroke-dasharray="9 7" marker-end="url(#cycle-return-arrow)"/>
-  <g fill="#101d30" stroke="#fff" stroke-width="3">
-    <circle cx="83" cy="409" r="5"/><circle cx="305" cy="224" r="5"/>
-    <circle cx="571" cy="107" r="5"/><circle cx="836" cy="238" r="5"/>
-    <circle cx="1280" cy="399" r="5"/>
-  </g>
-  <circle cx="1011" cy="355" r="4" fill="#087f73" stroke="#fff" stroke-width="2"/>
-  <g stroke="#c8d3dd" stroke-width="1" fill="none">
-    <path d="M305 224 323 248H338"/><path d="M836 238 856 215H877"/>
-  </g>
-  <a href="/services?stage=start" data-cycle-stage="start" class="cycle-stage-node" aria-label="Старт: посмотреть услуги">
-    <rect class="stage-hit-area" x="102" y="403" width="146" height="55" fill="transparent"/>
-    <text class="stage-name" x="110" y="443" fill="#101d30" font-family="DejaVu Sans, Arial, sans-serif" font-size="22">Старт</text>
-    <path class="stage-underline" d="M110 453h130" stroke="#d5dee6" stroke-width="1"/>
+  <path d="M58 342C149 340 174 270 245 190S367 83 445 90S577 139 655 205S801 321 911 335C948 341 981 343 1008 340" fill="none" stroke="#dbe7f1" stroke-width="3" stroke-linecap="round"/>
+  <path d="M815 310C891 316 962 211 1044 51" fill="none" stroke="#27d0ba" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#return-arrow)"/>
+  <a href="/services?stage=start" data-cycle-stage="start" class="cycle-stage-node" aria-label="Старт: показать услуги Вектора">
+    <circle class="stage-dot" cx="58" cy="342" r="5" fill="#e8f1f8" stroke="#101d30" stroke-width="3"/>
+    <g class="chart-stage-label">
+      <rect class="stage-hit-area" x="70" y="351" width="140" height="58" rx="20" fill="#1b3248" stroke="#476075"/>
+      <text class="stage-name" x="83" y="376" fill="#f5f9fc" font-family="DejaVu Sans, Arial, sans-serif" font-size="20">Старт</text>
+      <text class="stage-hint" x="83" y="396" fill="#87c9c5" font-family="DejaVu Sans, Arial, sans-serif" font-size="12">Услуги ↗</text>
+    </g>
   </a>
-  <a href="/services?stage=growth" data-cycle-stage="growth" class="cycle-stage-node selected" aria-current="step" aria-label="Рост: посмотреть услуги">
-    <rect class="stage-hit-area" x="336" y="239" width="146" height="55" fill="transparent"/>
-    <text class="stage-name" x="344" y="279" fill="#101d30" font-family="DejaVu Sans, Arial, sans-serif" font-size="22">Рост</text>
-    <path class="stage-underline" d="M344 289h130" stroke="#d5dee6" stroke-width="1"/>
+  <a href="/services?stage=growth" data-cycle-stage="growth" class="cycle-stage-node selected" aria-current="step" aria-label="Рост: показать услуги Вектора">
+    <circle class="stage-dot" cx="245" cy="190" r="5" fill="#e8f1f8" stroke="#101d30" stroke-width="3"/>
+    <g class="chart-stage-label">
+      <rect class="stage-hit-area" x="260" y="222" width="140" height="58" rx="20" fill="#1b3248" stroke="#476075"/>
+      <text class="stage-name" x="273" y="247" fill="#f5f9fc" font-family="DejaVu Sans, Arial, sans-serif" font-size="20">Рост</text>
+      <text class="stage-hint" x="273" y="267" fill="#87c9c5" font-family="DejaVu Sans, Arial, sans-serif" font-size="12">Услуги ↗</text>
+    </g>
   </a>
-  <a href="/services?stage=maturity" data-cycle-stage="maturity" class="cycle-stage-node" aria-label="Зрелость: посмотреть услуги">
-    <rect class="stage-hit-area" x="503" y="30" width="176" height="55" fill="transparent"/>
-    <text class="stage-name" x="511" y="70" fill="#101d30" font-family="DejaVu Sans, Arial, sans-serif" font-size="22">Зрелость</text>
-    <path class="stage-underline" d="M511 80h160" stroke="#d5dee6" stroke-width="1"/>
+  <a href="/services?stage=maturity" data-cycle-stage="maturity" class="cycle-stage-node" aria-label="Зрелость: показать услуги Вектора">
+    <circle class="stage-dot" cx="445" cy="90" r="5" fill="#e8f1f8" stroke="#101d30" stroke-width="3"/>
+    <g class="chart-stage-label">
+      <rect class="stage-hit-area" x="370" y="17" width="170" height="58" rx="20" fill="#1b3248" stroke="#476075"/>
+      <text class="stage-name" x="383" y="42" fill="#f5f9fc" font-family="DejaVu Sans, Arial, sans-serif" font-size="20">Зрелость</text>
+      <text class="stage-hint" x="383" y="62" fill="#87c9c5" font-family="DejaVu Sans, Arial, sans-serif" font-size="12">Услуги ↗</text>
+    </g>
   </a>
-  <a href="/services?stage=decline" data-cycle-stage="decline" class="cycle-stage-node" aria-label="Спад: посмотреть услуги">
-    <rect class="stage-hit-area" x="875" y="159" width="146" height="55" fill="transparent"/>
-    <text class="stage-name" x="883" y="199" fill="#101d30" font-family="DejaVu Sans, Arial, sans-serif" font-size="22">Спад</text>
-    <path class="stage-underline" d="M883 209h130" stroke="#d5dee6" stroke-width="1"/>
+  <a href="/services?stage=decline" data-cycle-stage="decline" class="cycle-stage-node" aria-label="Спад: показать услуги Вектора">
+    <circle class="stage-dot" cx="655" cy="205" r="5" fill="#e8f1f8" stroke="#101d30" stroke-width="3"/>
+    <g class="chart-stage-label">
+      <rect class="stage-hit-area" x="670" y="137" width="140" height="58" rx="20" fill="#1b3248" stroke="#476075"/>
+      <text class="stage-name" x="683" y="162" fill="#f5f9fc" font-family="DejaVu Sans, Arial, sans-serif" font-size="20">Спад</text>
+      <text class="stage-hint" x="683" y="182" fill="#87c9c5" font-family="DejaVu Sans, Arial, sans-serif" font-size="12">Услуги ↗</text>
+    </g>
   </a>
-  <a href="/services?stage=bankruptcy" data-cycle-stage="bankruptcy" class="cycle-stage-node" aria-label="Банкротство: посмотреть услуги">
-    <rect class="stage-hit-area" x="1043" y="398" width="241" height="55" fill="transparent"/>
-    <text class="stage-name" x="1051" y="438" fill="#101d30" font-family="DejaVu Sans, Arial, sans-serif" font-size="22">Банкротство</text>
-    <path class="stage-underline" d="M1051 448h225" stroke="#d5dee6" stroke-width="1"/>
+  <a href="/services?stage=bankruptcy" data-cycle-stage="bankruptcy" class="cycle-stage-node" aria-label="Банкротство: показать услуги Вектора">
+    <circle class="stage-dot" cx="1008" cy="340" r="5" fill="#e8f1f8" stroke="#101d30" stroke-width="3"/>
+    <g class="chart-stage-label">
+      <rect class="stage-hit-area" x="822" y="350" width="205" height="58" rx="20" fill="#1b3248" stroke="#476075"/>
+      <text class="stage-name" x="835" y="375" fill="#f5f9fc" font-family="DejaVu Sans, Arial, sans-serif" font-size="20">Банкротство</text>
+      <text class="stage-hint" x="835" y="395" fill="#87c9c5" font-family="DejaVu Sans, Arial, sans-serif" font-size="12">Услуги ↗</text>
+    </g>
   </a>
-  <a href="/services?stage=revival" data-cycle-stage="revival" class="cycle-stage-node" aria-label="Возрождение: посмотреть услуги">
-    <rect class="stage-hit-area" x="1052" y="44" width="248" height="55" fill="transparent"/>
-    <text class="stage-name" x="1060" y="84" fill="#101d30" font-family="DejaVu Sans, Arial, sans-serif" font-size="22">Возрождение</text>
-    <path class="stage-underline" d="M1060 94h210" stroke="#d5dee6" stroke-width="1"/>
+  <a href="/services?stage=revival" data-cycle-stage="revival" class="cycle-stage-node" aria-label="Возрождение: показать услуги Вектора">
+    <circle class="stage-dot" cx="1028" cy="80" r="5" fill="#e8f1f8" stroke="#101d30" stroke-width="3"/>
+    <g class="chart-stage-label">
+      <rect class="stage-hit-area" x="819" y="27" width="205" height="58" rx="20" fill="#1b3248" stroke="#476075"/>
+      <text class="stage-name" x="832" y="52" fill="#f5f9fc" font-family="DejaVu Sans, Arial, sans-serif" font-size="20">Возрождение</text>
+      <text class="stage-hint" x="832" y="72" fill="#87c9c5" font-family="DejaVu Sans, Arial, sans-serif" font-size="12">Услуги ↗</text>
+    </g>
   </a>
 </svg>
 `;
@@ -257,34 +264,76 @@ function cycleServices(stageId) {
         : [];
 }
 
+// Короткие формулировки на схеме ведут к существующим опубликованным услугам.
+const stageStories = {
+    start: {
+        greeting: "Поздравляем с началом бизнеса!",
+        traits: ["Идея становится делом: появляются первые клиенты и первые решения.", "Хочется понять, на что хватит денег и когда бизнес начнёт себя окупать.", "Сейчас удобно заложить понятные правила — пока всё можно выстроить с нуля."],
+        services: [["svc-strategy", "Превратить идею в план действий"], ["svc-financial-model", "Посчитать, сколько денег нужно на старт"], ["svc-management-accounting", "Сразу видеть доходы и расходы"]],
+    },
+    growth: {
+        traits: ["Заказов становится больше, а денег между оплатами всё чаще не хватает.", "Команда растёт, и договорённости на словах уже дают сбои.", "Возможностей много — важно выбрать, куда вкладывать силы и деньги."],
+        services: [["svc-strategy", "Выбрать, куда расти дальше"], ["svc-financial-model", "Посчитать, хватит ли денег на рост"], ["svc-investment-consulting", "Подготовить бизнес к привлечению инвестиций"]],
+    },
+    maturity: {
+        traits: ["Бизнес работает устойчиво, но привычные способы роста дают всё меньше.", "Оборот большой, а где именно зарабатывается прибыль — видно не всегда.", "Хочется меньше ручного контроля и больше ясности в результатах команды."],
+        services: [["svc-diagnostics", "Найти, где бизнес теряет эффективность"], ["svc-management-accounting", "Видеть прибыль по направлениям"], ["svc-business-kpi", "Договориться с командой о понятных результатах"]],
+    },
+    decline: {
+        traits: ["Продажи или прибыль снижаются, а постоянные расходы остаются.", "Платежи приходится откладывать, разговоры с кредиторами становятся сложнее.", "Нужно быстро понять, что сохранить и какие решения нельзя больше откладывать."],
+        services: [["svc-diagnostics", "Разобраться, почему ухудшаются результаты"], ["svc-debt", "Найти решение по накопившимся долгам"], ["svc-restructuring", "Перестроить обязательства под возможности бизнеса"]],
+    },
+    bankruptcy: {
+        traits: ["Текущих поступлений уже не хватает на обязательства.", "Давление кредиторов и риск потери активов ограничивают выбор.", "Важно трезво оценить ситуацию и подготовить обоснованный следующий шаг."],
+        services: [["svc-diagnostics", "Оценить состояние бизнеса и его активов"], ["svc-business-sale", "Подготовить бизнес к продаже"], ["svc-debt", "Разобраться с требованиями кредиторов"]],
+    },
+    revival: {
+        traits: ["Самый трудный период позади, появляются новые заказы и идеи.", "Для перезапуска нужны ресурсы, но повторять прежние ошибки не хочется.", "Пора собрать обновлённую модель бизнеса и понятный план возвращения к росту."],
+        services: [["svc-strategy", "Составить план нового этапа"], ["svc-funding", "Привлечь деньги на перезапуск"], ["svc-transformation", "Перестроить бизнес под новые задачи"]],
+    },
+};
+
 function cyclePanel(stageId) {
     const stage = (state.cycle_stages || []).find((item) => item.id === stageId);
-    if (!stage) return "";
-    const services = cycleServices(stageId);
-    return `<div class="cycle-panel-heading"><div><div class="eyebrow">Решения для этапа</div>
-        <h2>${esc(stage.title)}</h2></div><span class="cycle-count">Услуг: ${services.length}</span></div>
-        ${services.length ? `<div class="cycle-service-grid">${services.map((item) => `<a class="cycle-service-card" href="/services/${encodeURIComponent(item.id)}"><span><small>${esc(item.category)}</small><strong>${esc(item.title)}</strong></span><span class="cycle-link-arrow" aria-hidden="true">↗</span></a>`).join("")}</div>` : `<p class="lead">${esc(stage.description || "")}</p><a class="button" href="/services">Все услуги ↗</a>`}`;
+    const story = stageStories[stageId];
+    if (!stage || !story) return "";
+    const services = story.services.filter(([id]) => byKind("service").some((item) => item.id === id));
+    return `<div class="cycle-panel-heading"><div><div class="eyebrow">Узнаёте свой бизнес?</div>
+        <h2>${esc(stage.title)}</h2></div></div>
+        ${story.greeting ? `<p class="stage-greeting">${esc(story.greeting)}</p>` : ""}
+        <ul class="stage-traits">${story.traits.map((text) => `<li>${esc(text)}</li>`).join("")}</ul>
+        <div class="stage-services"><h3>Чем мы можем помочь</h3>
+        <div class="cycle-service-grid">${services.map(([id, title]) => `<a class="cycle-service-card" href="/services/${encodeURIComponent(id)}"><strong>${esc(title)}</strong><span class="cycle-link-arrow" aria-hidden="true">↗</span></a>`).join("")}</div>
+        ${services.length < 3 ? '<a class="arrow" href="/services">Посмотреть доступные услуги ↗</a>' : ""}</div>`;
 }
 
 function businessCycle() {
     const stages = state.cycle_stages || [];
     return `<section class="lifecycle-section cycle-hero" aria-labelledby="lifecycle-title">
-        <div class="cycle-hero-heading"><div class="eyebrow">ЦУКЗ Вектор</div>
-            <h1 id="lifecycle-title">Создаем решения<br>для сложного бизнеса</h1>
-            <div class="cycle-intro"><p>Всегда рядом, когда меняются задачи и масштабы.</p>
-            <span>Выберите этап на схеме — откроем соответствующие услуги.</span></div>
+        <div class="cycle-hero-heading"><div>
+            <h1 class="company-positioning"><b>Создаем решения для сложного бизнеса</b></h1>
+            <p class="lifecycle-title" id="lifecycle-title">Всегда рядом, когда меняются задачи и масштабы</p>
+        </div><div class="cycle-intro"><p><b>На какой стадии ваш<br>бизнес сегодня?</b></p>
+            </div></div>
+        <div class="cycle-map-layout">
+            <div class="cycle-map-card"><div class="cycle-map-instruction"><span class="interaction-mark" aria-hidden="true">↗</span><strong>Выберите ваш этап развития</strong><span class="instruction-detail">признаки и решения — справа</span></div>
+                <div class="cycle-visual">${cycleGraphic}</div>
+                <div class="cycle-stage-tabs" aria-label="Этапы жизненного цикла">${stages.map((stage) => `<button type="button" data-cycle-stage="${esc(stage.id)}" aria-pressed="${stage.id === "growth"}">${esc(stage.title)} <span aria-hidden="true">↗</span></button>`).join("")}</div>
+            </div>
+            <div class="cycle-results"><div id="cycle-panel" class="cycle-panel" aria-live="polite">${cyclePanel("growth")}</div>
+                <div class="cycle-catalog-link"><a class="button" href="/services">Все направления и услуги ↗</a></div>
+            </div>
         </div>
-        <div class="cycle-visual">${cycleGraphic}</div>
-        <div class="cycle-stage-tabs" aria-label="Этапы жизненного цикла">${stages.map((stage) => `<button type="button" data-cycle-stage="${esc(stage.id)}" aria-pressed="${stage.id === "growth"}">${esc(stage.title)}</button>`).join("")}</div>
-        <div id="cycle-panel" class="cycle-panel" aria-live="polite">${cyclePanel("growth")}</div>
-        <div class="cycle-catalog-link"><a class="arrow" href="/services">Все направления и услуги ↗</a></div>
     </section>`;
 }
 
 function setupCycle() {
     const region = document.querySelector(".cycle-hero");
     if (!region) return;
+    let selectedId = "";
     const select = (id) => {
+        if (selectedId === id) return;
+        selectedId = id;
         region.querySelectorAll("[data-cycle-stage]").forEach((element) => {
             const active = element.dataset.cycleStage === id;
             element.classList.toggle("selected", active);
@@ -296,6 +345,10 @@ function setupCycle() {
         region.querySelector("#cycle-panel").innerHTML = cyclePanel(id);
     };
     region.querySelectorAll("[data-cycle-stage]").forEach((element) => {
+        element.addEventListener("pointerenter", (event) => {
+            if (event.pointerType !== "touch") select(element.dataset.cycleStage);
+        });
+        element.onfocus = () => select(element.dataset.cycleStage);
         element.onclick = (event) => {
             event.preventDefault();
             select(element.dataset.cycleStage);
@@ -304,9 +357,109 @@ function setupCycle() {
     select("growth");
 }
 
+// Приветствие остаётся частью страницы: его можно прокрутить или пропустить.
+function welcomeScreen() {
+    return `<section class="welcome" aria-labelledby="welcome-title">
+        <div class="welcome-sticky">
+            <div class="welcome-copy">
+                <h1 id="welcome-title">Добро пожаловать в <span class="sr-only">Вектор</span></h1>
+            </div>
+            <div class="welcome-brand">
+                <p class="welcome-kicker">Центр урегулирования корпоративной задолженности</p>
+                <div class="welcome-word" aria-hidden="true">ВЕКТОР</div>
+            </div>
+            <div class="welcome-bottom"><p>Всегда рядом,<br>когда меняются задачи и масштабы.</p>
+                <button class="welcome-next" type="button">Прокрутите вниз <span aria-hidden="true">↓</span></button></div>
+            <span class="welcome-vector" aria-hidden="true"><svg viewBox="0 0 100 100" fill="none" aria-hidden="true"><path d="M12 88 88 12M12 12h76v76" stroke="currentColor" stroke-width="5"/></svg></span>
+        </div></section>`;
+}
+
+let disposeWelcome = () => {};
+
+function setupWelcome() {
+    const section = document.querySelector("#main > .welcome");
+    if (!section) return;
+    const header = document.querySelector("header");
+    const target = header.querySelector(".brand-word");
+    const original = section.querySelector(".welcome-word");
+    const caption = section.querySelector(".welcome-kicker");
+    const targetCaption = header.querySelector(".brand small");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const controller = new AbortController();
+    const options = { signal: controller.signal };
+    document.body.classList.add("welcome-page");
+    const floating = original.cloneNode(true);
+    floating.className = "welcome-flight";
+    floating.setAttribute("aria-hidden", "true");
+    const flyingCaption = caption.cloneNode(true);
+    flyingCaption.className = "welcome-caption-flight";
+    flyingCaption.setAttribute("aria-hidden", "true");
+    document.body.append(floating, flyingCaption);
+    let frame = 0;
+    // Геометрия рассчитывается заново при изменении размера окна и масштаба текста.
+    function update() {
+        frame = 0;
+        const headerHeight = header.getBoundingClientRect().height;
+        section.style.setProperty("--welcome-header", `${headerHeight}px`);
+        const bounds = section.getBoundingClientRect();
+        const travel = Math.max(1, section.offsetHeight - (window.innerHeight - headerHeight));
+        const progress = Math.min(1, Math.max(0, (headerHeight - bounds.top) / travel));
+        const eased = progress * progress * (3 - 2 * progress);
+        const start = original.getBoundingClientRect();
+        const end = target.getBoundingClientRect();
+        const active = !reducedMotion.matches && progress < 1 && start.width > 0;
+        floating.hidden = !active;
+        original.style.visibility = reducedMotion.matches ? "visible" : "hidden";
+        target.style.visibility = progress < 1 ? "hidden" : "visible";
+        targetCaption.style.visibility = progress < 1 ? "hidden" : "visible";
+        flyingCaption.hidden = !active;
+        caption.style.visibility = reducedMotion.matches ? "visible" : "hidden";
+        if (active) {
+            const scale = 1 + (end.width / start.width - 1) * eased;
+            floating.style.width = `${start.width}px`;
+            floating.style.fontSize = getComputedStyle(original).fontSize;
+            floating.style.letterSpacing = getComputedStyle(original).letterSpacing;
+            floating.style.transform = `translate(${start.left + (end.left - start.left) * eased}px, ${start.top + (end.top - start.top) * eased}px) scale(${scale})`;
+            const from = caption.getBoundingClientRect();
+            const to = targetCaption.getBoundingClientRect();
+            const fromStyle = getComputedStyle(caption);
+            const toStyle = getComputedStyle(targetCaption);
+            const mix = (a, b) => a + (b - a) * eased;
+            flyingCaption.style.transform = `translate(${mix(from.left, to.left)}px, ${mix(from.top, to.top)}px)`;
+            flyingCaption.style.width = `${mix(from.width, to.width)}px`;
+            for (const property of ["fontSize", "lineHeight", "letterSpacing", "fontWeight"]) {
+                const value = mix(parseFloat(fromStyle[property]) || 0, parseFloat(toStyle[property]) || 0);
+                flyingCaption.style[property] = property === "fontWeight" ? String(value) : `${value}px`;
+            }
+        }
+        section.style.setProperty("--welcome-copy-opacity", reducedMotion.matches ? "1" : String(Math.max(0, 1 - progress * 3)));
+    }
+    function schedule() {
+        if (!frame) frame = requestAnimationFrame(update);
+    }
+    window.addEventListener("scroll", schedule, { ...options, passive: true });
+    window.addEventListener("resize", schedule, options);
+    reducedMotion.addEventListener?.("change", schedule, options);
+    section.querySelector(".welcome-next").addEventListener("click", () => {
+        const diagram = document.querySelector("#main .home-content > .cycle-hero");
+        window.scrollTo({ top: diagram.getBoundingClientRect().top + window.scrollY - header.offsetHeight,
+            behavior: reducedMotion.matches ? "instant" : "smooth" });
+    }, options);
+    disposeWelcome = () => {
+        controller.abort();
+        cancelAnimationFrame(frame);
+        floating.remove();
+        flyingCaption.remove();
+        targetCaption.style.removeProperty("visibility");
+        target.style.removeProperty("visibility");
+        document.body.classList.remove("welcome-page");
+    };
+    update();
+}
+
 function home() {
-    return `${businessCycle()}<section class="wrap">${cta()}</section>
-        <section class="wrap"><div class="eyebrow">Вопросы</div><h2>До первого разговора</h2>${faq()}</section>`;
+    return `${welcomeScreen()}<div class="home-content">${businessCycle()}<section class="wrap">${cta()}</section>
+        <section class="wrap"><div class="eyebrow">Вопросы</div><h2>До первого разговора</h2>${faq()}</section></div>`;
 }
 
 // Один шаблон используется на главной и в предпросмотре редактора.
@@ -420,7 +573,40 @@ function previewNewsOnHome(news) {
     modal.showModal();
 }
 
+function directionGroups(items, selected = "", expand = false) {
+    const categories = [...new Set(items.map((item) => item.category || "Другие услуги"))];
+    return (
+        categories
+            .filter((category) => !selected || category === selected)
+            .map((category) => {
+                const services = items.filter(
+                    (item) => (item.category || "Другие услуги") === category,
+                );
+                return `<details class="direction-group" ${selected || expand ? "open" : ""}><summary><span><strong>${esc(category)}</strong><small>Услуг: ${services.length}</small></span><span class="direction-toggle" aria-hidden="true"></span></summary>
+            <div class="direction-services">${services.map((item) => `<a href="/services/${encodeURIComponent(item.id)}"><span><strong>${esc(item.title)}</strong><small>${esc(item.summary)}</small></span><span aria-hidden="true">↗</span></a>`).join("")}</div></details>`;
+            })
+            .join("") || '<p class="empty">По выбранному направлению услуг пока нет.</p>'
+    );
+}
+
+function servicesOverview() {
+    const query = new URLSearchParams(location.search);
+    const stage = (state.cycle_stages || []).find((item) => item.id === query.get("stage"));
+    const items = stage && stage.service_ids.length ? cycleServices(stage.id) : byKind("service");
+    const allCategories = [
+        ...new Set(byKind("service").map((item) => item.category || "Другие услуги")),
+    ];
+    const selected = allCategories.includes(query.get("direction")) ? query.get("direction") : "";
+    return `<section class="wrap services-overview"><div class="eyebrow">Вектор / Услуги</div><h1>Направления и услуги</h1>
+        <p class="lead">Все компетенции компании в одном месте. Раскройте направление, чтобы увидеть услуги, или выберите его в фильтре.</p>
+        ${stage ? `<p class="stage-filter-note">Этап бизнеса: ${esc(stage.title)} · <a href="/services">Посмотреть все направления без фильтра этапа</a></p>` : ""}
+        <div class="service-filter-bar"><label>Фильтр по направлению<select id="service-direction-filter"><option value="">Все направления</option>${allCategories.map((category) => `<option value="${esc(category)}" ${selected === category ? "selected" : ""}>${esc(category)}</option>`).join("")}</select></label><p><strong>${allCategories.length}</strong> направления · <strong>${byKind("service").length}</strong> услуг</p></div>
+        <p id="filtered-services-count" class="service-result-count">Показано услуг: ${selected ? items.filter((item) => (item.category || "Другие услуги") === selected).length : items.length}</p><div id="direction-results">${directionGroups(items, selected, !!stage)}</div>
+    </section><section class="wrap">${cta()}</section>`;
+}
+
 function listing(section) {
+    if (section === "services") return servicesOverview();
     const stageId = new URLSearchParams(location.search).get("stage");
     const stage = (state.cycle_stages || []).find((item) => item.id === stageId);
     const items =
@@ -514,8 +700,7 @@ function contacts() {
     const whatsapp = String(settings.whatsapp || "").replace(/\D/g, "");
     return `<section class="wrap"><div class="eyebrow">Контакты</div><h1>Давайте начнём разговор</h1>
         <div class="grid two"><div class="card contact-card"><h3>Связаться с командой</h3>
-        ${phoneLink("button phone-button")}<p class="small">${esc(hoursText(state.contact?.business_hours))}</p>
-        ${settings.email ? `<a class="contact-method-link" href="mailto:${esc(settings.email)}">${esc(settings.email)} ↗</a>` : ""}
+        ${settings.email ? emailLink("button email-button") : '<p class="small">Адрес почты скоро появится.</p>'}
         ${telegram ? `<a class="contact-method-link" href="https://t.me/${telegram}" target="_blank" rel="noopener">Telegram ↗</a>` : ""}
         ${whatsapp ? `<a class="contact-method-link" href="https://wa.me/${whatsapp}" target="_blank" rel="noopener">WhatsApp ↗</a>` : ""}
         <p>${esc(settings.address || "Адрес будет добавлен")}</p>
@@ -987,7 +1172,7 @@ ${tab === "news" ? '<button class="secondary" id="preview-home" type="button">П
         $("#main").innerHTML = adminShell(
             tab,
             `<h3>О компании и контакты</h3>
-<form id="settings-edit" class="panel">${area("Описание компании", "about", x.about)}${field("Телефон", "phone", x.phone)}${field("Email", "email", x.email)}${field("Telegram (@username)", "telegram", x.telegram)}${field("WhatsApp (номер телефона)", "whatsapp", x.whatsapp)}
+<form id="settings-edit" class="panel">${area("Описание компании", "about", x.about)}${field("Телефон", "phone", x.phone)}${field("Почта для связи на сайте", "email", x.email)}${field("Telegram (@username)", "telegram", x.telegram)}${field("WhatsApp (номер телефона)", "whatsapp", x.whatsapp)}
 <fieldset class="photo-editor"><legend>Когда принимать звонки</legend>
 <p class="small">Укажите часовой пояс компании. Интервал через полночь считается ночной сменой.</p>
 <label>Часовой пояс<select name="hours_timezone">${["Asia/Novosibirsk", "Europe/Moscow", "UTC"].map((zone) => `<option ${hours.timezone === zone ? "selected" : ""}>${zone}</option>`).join("")}${!["Asia/Novosibirsk", "Europe/Moscow", "UTC"].includes(hours.timezone) ? `<option selected>${esc(hours.timezone)}</option>` : ""}</select></label>
@@ -1041,9 +1226,10 @@ ${tab === "news" ? '<button class="secondary" id="preview-home" type="button">П
 async function refresh() {
     state = await api("public");
     const node = $("#header-contact");
-    if (node) node.outerHTML = phoneLink("button compact", true);
+    if (node) node.outerHTML = emailLink("button compact", true);
 }
 async function render() {
+    disposeWelcome();
     clearInterval(carousel);
     const path = location.pathname.replace(/\/$/, "") || "/";
     let parts;
@@ -1096,6 +1282,32 @@ async function render() {
         if (path === "/") {
             setupCarousel();
             setupCycle();
+            setupWelcome();
+        }
+        if ($("#service-direction-filter")) {
+            $("#service-direction-filter").onchange = (event) => {
+                const query = new URLSearchParams(location.search);
+                const selected = event.target.value;
+                if (selected) query.set("direction", selected);
+                else query.delete("direction");
+                history.replaceState(
+                    {},
+                    "",
+                    "/services" + (query.size ? "?" + query.toString() : ""),
+                );
+                const stage = (state.cycle_stages || []).find(
+                    (item) => item.id === query.get("stage"),
+                );
+                const items =
+                    stage && stage.service_ids.length ? cycleServices(stage.id) : byKind("service");
+                $("#direction-results").innerHTML = directionGroups(items, selected, !!stage);
+                $("#filtered-services-count").textContent =
+                    "Показано услуг: " +
+                    (selected
+                        ? items.filter((item) => (item.category || "Другие услуги") === selected)
+                              .length
+                        : items.length);
+            };
         }
         if ($("#case-filters"))
             $("#case-filters").onclick = (e) => {
