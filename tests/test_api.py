@@ -331,7 +331,9 @@ class SiteTests(unittest.TestCase):
             if item.get("source") == "company-material-v2"
         ]
         self.assertEqual(len(source), 13)
-        self.assertEqual(len(public["settings"]["founders"]), 2)
+        self.assertFalse(public["visibility"]["about"])
+        self.assertNotIn("founders", public["settings"])
+        self.assertNotIn("about", public["settings"])
         ids = {item["id"] for item in source}
         self.assertTrue(
             all(
@@ -341,6 +343,8 @@ class SiteTests(unittest.TestCase):
         )
         self.login()
         founders = self.req("/api/admin/founders")[1]
+        self.assertEqual(len(founders), 2)
+        self.assertTrue(self.req("/api/admin/settings")[1]["about"])
         founder = founders[0]
         self.assertEqual(
             self.req("/api/admin/founders", founder, csrf=False)[0], 403
@@ -437,7 +441,7 @@ class SiteTests(unittest.TestCase):
             )[0],
             200,
         )
-        saved = self.req("/api/public")[1]["settings"]["founders"][0]
+        saved = self.req("/api/admin/founders")[1][0]
         self.assertEqual(saved["photo"], result["url"])
         self.req("/api/admin/founders", founder)
 
@@ -465,7 +469,6 @@ class SiteTests(unittest.TestCase):
             "/cases/restructuring",
             "/news",
             "/news/approach",
-            "/about",
             "/contacts",
             "/request",
             "/privacy",
@@ -476,6 +479,12 @@ class SiteTests(unittest.TestCase):
                 self.assertEqual(res.status, 200)
                 self.assertIn("text/html", res.headers["Content-Type"])
                 self.assertEqual(res.headers["X-Frame-Options"], "DENY")
+        for path in ["/about", "/about/"]:
+            with self.assertRaises(HTTPError) as caught:
+                self.client.open(self.url + path)
+            self.assertEqual(caught.exception.code, 404)
+            self.assertIn("text/html", caught.exception.headers["Content-Type"])
+            caught.exception.close()
         self.assertEqual(self.req("/api/unknown")[0], 404)
 
 

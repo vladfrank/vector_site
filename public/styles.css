@@ -3914,3 +3914,52 @@ header .mark svg { display: block; width: .8em; height: .8em; }
     border-top: none;
     background: transparent;
 }
+
+/* Три сцены на неподвижном фоне. Исходные цвета, шрифты и схема сохранены. */
+.scroll-scene { position: relative; }
+.scene-surface { transform-origin: 50% 20%; }
+.scroll-journey .scroll-scene { height: var(--scene-height, auto); }
+.scroll-journey .scene-sticky { position: sticky; top: var(--scene-top, var(--journey-header, 88px)); }
+.scroll-journey .home-content { background: transparent; }
+.scroll-journey .cycle-scene { z-index: 2; }
+.scroll-journey .contact-scene { z-index: 3; padding: 0 clamp(20px, 5vw, 80px); }
+.scroll-journey .scene-surface { will-change: transform, opacity; }
+.conversation-window { max-width: 1200px; margin: 0 auto; padding: clamp(18px, 3vw, 36px); background: var(--bg); border-radius: 24px; border: 1px solid #cbdce5; box-shadow: 0 24px 70px #06101e55; color: var(--navy); }
+.conversation-window .cta { margin: 0; }
+.conversation-faq { padding: clamp(24px, 4vw, 42px) clamp(0px, 1vw, 14px) 0; }
+.conversation-faq h2 { margin-top: 0; }
+.conversation-faq details { background: #fff; }
+.scroll-journey .cycle-scene .cycle-hero { padding-bottom: 30px; border-bottom: 0; }
+.scroll-journey .welcome-sticky { pointer-events: none; }
+.scroll-journey .welcome-next { pointer-events: auto; }
+@media (max-width: 640px) {
+    .scroll-journey .contact-scene { padding-inline: 14px; }
+    .conversation-window { padding: 16px; border-radius: 20px; }
+    .conversation-window .cta { padding: 24px 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .scroll-journey .scroll-scene { height: auto; margin-bottom: 30px; }
+    .scroll-journey .scene-sticky { position: relative; top: 0; }
+    .scroll-journey .scene-surface { transform: none; opacity: 1; will-change: auto; }
+}
+
+/* Одна контрастная панель связи, без вложенной синей карточки. */
+.conversation-window .cta {
+    background: transparent;
+    color: var(--navy);
+    border: 0;
+    border-radius: 0;
+    padding: 8px 12px 24px;
+}
+.conversation-window .cta h2 { color: var(--navy); }
+.conversation-window .cta p { color: #52667a; }
+.conversation-window .cta .eyebrow { color: #087f73; }
+.conversation-window .call-alternative { color: #087f73; }
+.conversation-window .conversation-faq {
+    border-top: 1px solid #d6e1e8;
+    padding-top: 28px;
+    margin-top: 8px;
+}
+@media (max-width: 640px) {
+    .conversation-window .cta { padding: 8px 4px 24px; }
+}

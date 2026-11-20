@@ -395,6 +395,11 @@ function setupWelcome() {
     flyingCaption.className = "welcome-caption-flight";
     flyingCaption.setAttribute("aria-hidden", "true");
     document.body.append(floating, flyingCaption);
+    const cycleScene = document.querySelector(".cycle-scene");
+    const contactScene = document.querySelector(".contact-scene");
+    const scenes = [cycleScene, contactScene].filter(Boolean);
+    document.body.classList.add("scroll-journey");
+    const clamp = (value) => Math.min(1, Math.max(0, value));
     let frame = 0;
     // Геометрия рассчитывается заново при изменении размера окна и масштаба текста.
     function update() {
@@ -433,6 +438,31 @@ function setupWelcome() {
             }
         }
         section.style.setProperty("--welcome-copy-opacity", reducedMotion.matches ? "1" : String(Math.max(0, 1 - progress * 3)));
+        // Положение сцен зависит только от обычной прокрутки; колесо не перехватываем.
+        const available = Math.max(320, window.innerHeight - headerHeight);
+        document.documentElement.style.setProperty("--journey-header", `${headerHeight}px`);
+        for (const scene of scenes) {
+            const surface = scene.querySelector(".scene-surface");
+            const height = surface.offsetHeight;
+            const hold = available * (scene === cycleScene ? 0.95 : 0.65);
+            const stickyTop = headerHeight - Math.max(0, height - available);
+            const top = scene.getBoundingClientRect().top;
+            scene.style.setProperty("--scene-height", `${height + hold}px`);
+            scene.style.setProperty("--scene-top", `${stickyTop}px`);
+            const entered = clamp((window.innerHeight - top) / available);
+            const held = clamp((stickyTop - top) / hold);
+            const leaving = clamp((held - 0.45) / 0.55);
+            const entry = entered * entered * (3 - 2 * entered);
+            if (reducedMotion.matches) {
+                surface.style.removeProperty("transform");
+                surface.style.removeProperty("opacity");
+            } else {
+                const scale = 0.94 + entry * 0.06 - leaving * 0.12;
+                const lift = (1 - entry) * 48 - leaving * available * 0.12;
+                surface.style.transform = `translateY(${lift}px) scale(${scale})`;
+                surface.style.opacity = String((0.3 + entry * 0.7) * (1 - leaving));
+            }
+        }
     }
     function schedule() {
         if (!frame) frame = requestAnimationFrame(update);
@@ -441,12 +471,25 @@ function setupWelcome() {
     window.addEventListener("resize", schedule, options);
     reducedMotion.addEventListener?.("change", schedule, options);
     section.querySelector(".welcome-next").addEventListener("click", () => {
-        const diagram = document.querySelector("#main .home-content > .cycle-hero");
+        const diagram = document.querySelector(".cycle-scene");
         window.scrollTo({ top: diagram.getBoundingClientRect().top + window.scrollY - header.offsetHeight,
             behavior: reducedMotion.matches ? "instant" : "smooth" });
     }, options);
+    const resizeObserver = typeof ResizeObserver === "function" ? new ResizeObserver(schedule) : null;
+    resizeObserver?.observe(header);
+    scenes.forEach((scene) => resizeObserver?.observe(scene.querySelector(".scene-surface")));
+    // Клавиатурный переход сразу выводит выбранную сцену на экран.
+    scenes.forEach((scene) => scene.addEventListener("focusin", () => {
+        const top = scene.getBoundingClientRect().top;
+        if (top > window.innerHeight * 0.75 || top < -scene.offsetHeight + window.innerHeight) {
+            window.scrollTo({ top: scene.getBoundingClientRect().top + window.scrollY - header.offsetHeight, behavior: "instant" });
+        }
+    }, options));
     disposeWelcome = () => {
         controller.abort();
+        resizeObserver?.disconnect();
+        document.body.classList.remove("scroll-journey");
+        document.documentElement.style.removeProperty("--journey-header");
         cancelAnimationFrame(frame);
         floating.remove();
         flyingCaption.remove();
@@ -458,8 +501,13 @@ function setupWelcome() {
 }
 
 function home() {
-    return `${welcomeScreen()}<div class="home-content">${businessCycle()}<section class="wrap">${cta()}</section>
-        <section class="wrap"><div class="eyebrow">Вопросы</div><h2>До первого разговора</h2>${faq()}</section></div>`;
+    return `${welcomeScreen()}<div class="home-content">
+        <div class="scroll-scene cycle-scene"><div class="scene-sticky"><div class="scene-surface">${businessCycle()}</div></div></div>
+        <section class="scroll-scene contact-scene" aria-labelledby="conversation-title"><div class="scene-sticky"><div class="scene-surface conversation-window">
+            ${cta()}
+            <div class="conversation-faq"><div class="eyebrow">Вопросы</div><h2 id="conversation-title">До первого разговора</h2>${faq()}</div>
+        </div></div></section>
+    </div>`;
 }
 
 // Один шаблон используется на главной и в предпросмотре редактора.
@@ -1255,7 +1303,8 @@ async function render() {
     try {
         if (
             (parts[0] === "news" && !state.visibility?.news) ||
-            (parts[0] === "cases" && !state.visibility?.cases)
+            (parts[0] === "cases" && !state.visibility?.cases) ||
+            (parts[0] === "about" && !state.visibility?.about)
         ) {
             $("#main").innerHTML = notFound();
             return;

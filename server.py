@@ -241,10 +241,14 @@ class Handler(BaseHTTPRequestHandler):
                         for x in items
                         if x.get("published") and x.get("kind") == "service"
                     ],
-                    "settings": settings,
+                    "settings": {
+                        key: value
+                        for key, value in settings.items()
+                        if key not in {"about", "founders"}
+                    },
                     "contact": contact_status(settings),
                     "cycle_stages": CONTENT["stages"],
-                    "visibility": {"news": False, "cases": False},
+                    "visibility": {"news": False, "cases": False, "about": False},
                 },
             )
         if path.startswith("/api/admin/"):
@@ -321,7 +325,8 @@ class Handler(BaseHTTPRequestHandler):
             ".png": "image/png",
         }.get(file.suffix, "application/octet-stream")
         body = file.read_bytes()
-        self.send_response(200)
+        status = 404 if path.rstrip("/") == "/about" else 200
+        self.send_response(status)
         self.send_header("Content-Type", mime)
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
